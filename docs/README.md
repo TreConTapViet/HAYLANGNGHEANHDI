@@ -98,6 +98,37 @@ Code đơn giản hơn thiết kế trong các file 02–06 ở những điểm 
 
 Đã kiểm bằng Edge không giao diện (máy tính 1280×800 và khung điện thoại 390×844): YouTube phát được; kéo phần đầu bảng bài hát xuống thì đóng; vuốt trái trên đĩa sang bài kế; vuốt xuống thu thành thẻ nhỏ (khung video 278×200); video nền dừng khi cuộn khỏi màn hình; console không lỗi. JS ban đầu 72KB sau nén, phần trình phát 49KB tải sau.
 
+## Bản dựng hoàn thiện lần 2 (11/11/2026): các tính năng bổ sung
+
+Bản hoàn thiện thứ hai đã bổ sung đầy đủ các tính năng cho trải nghiệm nghe nhạc hiện đại:
+
+1. **Tích hợp Media Session API (`navigator.mediaSession`):**
+   - Hỗ trợ hiển thị tên bài hát, nghệ sĩ, album và ảnh bìa chất lượng cao trên màn hình khóa điện thoại (iOS / Android), thanh thông báo hệ thống và phím media trên bàn phím / tai nghe Bluetooth.
+   - Thao tác Play / Pause, Next, Previous, Seek trực tiếp từ màn hình khóa và thiết bị ngoại vi.
+2. **Thanh tiến độ & tua nhạc (Scrubber Timeline):**
+   - Hiển thị thời gian trôi qua và tổng thời lượng (`mm:ss`).
+   - Hỗ trợ kéo / chạm thanh scrubber để tua nhạc cả khi xem YouTube lẫn khi phát bản nghe thử 30s.
+   - Thanh tiến độ mini player mảnh tinh tế ở cạnh dưới thẻ nhỏ.
+3. **Bộ lọc thể loại & Tìm kiếm tức thì (Instant Search):**
+   - Tab phân loại: *Tất cả*, *Rap*, *Pop*, *Indie*, *Ballad*.
+   - Khung tìm kiếm nghệ sĩ & bài hát hỗ trợ gõ không dấu (ví dụ: gõ "hieu", "son tung", "cat doi noi sau" ra ngay kết quả).
+   - Danh sách bài hát khớp từ khóa hiển thị ngay bên dưới để nghe ngay bằng một chạm.
+4. **Hàng đợi phát (Queue Drawer trong Player):**
+   - Nút `☰` trong trình phát mở danh sách bài của nghệ sĩ đang nghe, có hiệu ứng sóng nhạc ở bài đang phát. Khách chọn bài khác mà không cần thu nhỏ player.
+5. **Chế độ Lặp lại & Phát ngẫu nhiên:**
+   - Nút Lặp lại: Lặp danh sách (`🔁`), Lặp 1 bài (`🔂`), Tắt lặp (`➡`).
+   - Nút Phát ngẫu nhiên (`🔀`).
+6. **Điều chỉnh âm lượng & Tắt tiếng (Mute):**
+   - Nút tắt tiếng và thanh trượt âm lượng trên màn hình rộng; phím tắt `M` để bật/tắt tiếng, mũi tên `↑`/`↓` tăng/giảm âm lượng.
+7. **Chia sẻ liên kết trực tiếp (Deep Link & Toast):**
+   - Hỗ trợ URL tham số `?artist=...&track=...` (mở web là tự phát ngay bài được chia sẻ).
+   - Nút sao chép liên kết `🔗` kèm thông báo Toast nổi dịu mắt.
+8. **Mở rộng mini player trực quan:**
+   - Chạm vào thẻ nhỏ ở bất kỳ vị trí nào để phóng to lại trình phát.
+   - Sửa vị trí nút mở rộng khi phát audio nghe thử (khung video ẩn).
+9. **Khắc phục triệt để race condition phần tử `#yt`:**
+   - Chờ React commit thẻ chứa `#yt` vào DOM trước khi gọi `YT.Player`, loại bỏ lỗi khi người dùng bật tắt nhanh hoặc đổi bài.
+
 ## Những điều còn chờ
 
 - Chốt danh sách nghệ sĩ và bài cuối cùng.
