@@ -118,6 +118,16 @@ Màu chủ đạo được tính ngay lúc chuẩn bị, để web không phải
 | Video tên giống nhưng khác kênh | Bỏ, không đoán |
 | Cả hai nguồn đều không có | Loại bài khỏi danh sách |
 
+## Lời bài hát (thêm 12/11/2026)
+
+`npm run data` hỏi thêm **LRCLIB** (`lrclib.net/api/search`, không cần khóa) cho từng bài:
+1. Chỉ nhận kết quả có lời đồng bộ, tên nghệ sĩ khớp `spotifyQuery`, tên bài bắt đầu bằng tên bài trong file `.md`, không phải bản remix/live/karaoke.
+2. Có nhiều phiên bản thì chọn bản có độ dài gần bài trên iTunes nhất.
+3. Chuyển lời LRC (`[mm:ss.xx] lời`) thành `[[giây, "lời"], ...]`, ghi vào `public/data/lyrics/<id>.json` kèm độ dài bản lời. Thư mục này được xóa và ghi lại mỗi lần chạy.
+4. Bài không có lời được ghi vào báo cáo cuối lượt chạy, và `songs.json` đánh dấu `lyrics: false`.
+
+Kết quả lần chạy 12/11/2026: 102/103 bài có lời (thiếu "Túi 3 Gang").
+
 ## Ghi nguồn
 
 Chân trang ghi rõ: nhạc phát từ YouTube, thông tin và ảnh bìa từ iTunes/Apple Music, và mỗi bài có link về video gốc. Trước khi công khai mình sẽ đọc lại điều khoản của từng nền tảng.

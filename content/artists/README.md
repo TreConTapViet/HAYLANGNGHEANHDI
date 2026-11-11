@@ -17,6 +17,8 @@ tracks:
     feat: "Ca sĩ khách mời"   # tùy chọn
     youtube: ID11KYTU         # 11 ký tự, lấy từ video chính thức
     kind: mv                  # mv | video | lyric | audio
+    seconds: 287              # tùy chọn: độ dài video, để chọn đúng phiên bản lời
+    lyricsOffset: 2.5         # tùy chọn: lời chạy sớm hơn nhạc thì tăng, muộn hơn thì giảm (giây)
 ---
 
 Phần dưới là ghi chú tự do cho người quản lý, script bỏ qua.
@@ -24,8 +26,8 @@ Phần dưới là ghi chú tự do cho người quản lý, script bỏ qua.
 
 ## Quy tắc chọn video
 
-1. Chỉ lấy video của **kênh chính thức** hoặc hãng đĩa của nghệ sĩ.
-2. Ưu tiên MV; nếu MV quá dài hoặc có đoạn dẫn dài thì dùng bản Audio / Lyric.
+1. Chỉ lấy video của **kênh chính thức** hoặc hãng đĩa của nghệ sĩ. **Không bao giờ dùng video lyric do người khác tải lại:** để né hệ thống bản quyền của YouTube, các bản này thường bị đổi tông hoặc tốc độ, nên nghe sai nốt, sai nhịp và lời bị lệch. Ví dụ "Thằng Điên": bản tải lại dài gần bằng bản gốc nhưng vẫn sai tông.
+2. Vì lời bài hát được canh theo bản thu gốc, ưu tiên bản **Official Audio / Lyric / Visualizer** trên kênh chính thức. MV thường có đoạn mở đầu hoặc kết thúc riêng làm lời lệch.
 3. Không lấy bản live, remix, nhạc tổng hợp hoặc video do fan đăng.
 4. Có video **cấm nhúng** hay không thì chỉ biết khi chạy thật. Web sẽ tự lùi về bản nghe thử 30 giây.
 

@@ -129,8 +129,28 @@ Bản hoàn thiện thứ hai đã bổ sung đầy đủ các tính năng cho t
 9. **Khắc phục triệt để race condition phần tử `#yt`:**
    - Chờ React commit thẻ chứa `#yt` vào DOM trước khi gọi `YT.Player`, loại bỏ lỗi khi người dùng bật tắt nhanh hoặc đổi bài.
 
+## Bản dựng lần 3 (12/11/2026): lời bài hát chạy theo nhạc, bố cục ba cột, biểu tượng Lucide
+
+Theo yêu cầu: bỏ video/MV làm phần chính, thay bằng lời bài hát; danh sách bài nằm bên trái lời; đổi toàn bộ biểu tượng sang SVG gốc; sửa ảnh nghệ sĩ lúc thấy lúc không.
+
+| Thay đổi | Chi tiết | Ở đâu |
+|---|---|---|
+| **Lời bài hát chạy theo nhạc** | Dòng đang hát sáng lên đúng giờ; trong dòng, màu sáng quét qua từng chữ, chữ đang hát trồi lên và phóng nhẹ, có quầng sáng theo màu ảnh bìa; dòng càng xa càng mờ và nhòe; tự cuộn để dòng đang hát ở giữa; chạm một dòng để nhảy tới đó | `src/Lyrics.tsx`, `src/lrc.ts`, [04](04-playback-logic.md), [06](06-design-system.md) |
+| **Nguồn lời** | LRCLIB (miễn phí, không cần khóa): 102/103 bài có lời đồng bộ, chỉ thiếu "Túi 3 Gang". Lời chỉ có giờ **theo dòng**; giờ **từng chữ là ước lượng** | `scripts/build-data.mjs`, [ADR-008](08-decisions.md) |
+| **Video thu thành ô nhỏ** | Không xóa hẳn được vì điều khoản YouTube bắt khung phát luôn hiện, tối thiểu 200×200px. Ô video nằm ở cột phải (màn rộng) hoặc dưới lời (điện thoại) | [ADR-007](08-decisions.md) |
+| **Bố cục ba cột** (màn từ 1100px) | `[danh sách] [lời] [đĩa · tên bài · video · nút]`. Chọn bài trong bảng nghệ sĩ: bảng trượt dần sang trái thành cột danh sách, lời hiện lên. Nút danh sách mở/đóng cột, lời dịch theo. Màn hẹp: danh sách là ngăn kéo từ trái, chọn bài xong tự đóng | `src/Overlays.tsx`, `src/styles.css` |
+| **Biểu tượng** | 18 biểu tượng chép nguyên mã SVG từ Lucide 1.72.0 (giấy phép ISC), thêm biểu tượng micro cho bài có lời | `src/Icons.tsx`, [ADR-009](08-decisions.md) |
+| **Sửa ảnh nghệ sĩ** | Bỏ tải chậm (`lazy`) ở dải nghệ sĩ; lấy ảnh 480px thay 900px; ảnh lỗi thì đổi sang ảnh video của nghệ sĩ, lỗi nữa thì hiện chữ cái đầu; thẻ hiện kín bề ngang màn hình; thẻ quay vòng không còn bay ngang qua giữa màn hình | `src/App.tsx`, `src/player.ts` |
+| Gọn code | Bảng nghệ sĩ và cột danh sách dùng chung một danh sách bài (`TrackList`); nút trong trình phát dùng chung `Btn` | `src/Overlays.tsx` |
+| Kiểm thử | `npm test`: 4 bài kiểm tra phần tính giờ lời | `scripts/lyrics.test.mjs` |
+
+**Vấn đề dữ liệu phát hiện khi kiểm tra (chưa sửa, chờ quyết định):** ở lần chuyển sang video lyric trước đó, **70/103 bài** đã bị đổi sang video do người khác tải lại, không phải kênh chính thức. Nhiều bản bị cắt hoặc đổi tốc độ (ví dụ "Ngủ Một Mình" dài 2:28 trong khi bản thu dài khoảng 3:00; "Bùa Yêu" là bản dài 19 phút) nên **56 bài lệch lời hơn 3 giây**. Khi video lệch bản thu hơn 3 giây, trình phát hiện cảnh báo và người nghe có thể chạm vào dòng để chỉnh. Mỗi bài cũng có thể chỉnh tay bằng trường `lyricsOffset` (xem [content/artists/README.md](../content/artists/README.md)).
+
+Đã kiểm bằng Edge không giao diện (1440×900 và 390×844): bảng nghệ sĩ trượt sang thành cột danh sách bên trái, chữ quét sáng theo giờ phát, chạm dòng thì tua tới, ngăn kéo trên điện thoại đóng sau khi chọn bài, thẻ nhỏ giữ khung video 288×200, 16/16 ảnh nghệ sĩ tải xong, console không lỗi. **Chưa thử trên điện thoại thật**, chưa đo FPS của hiệu ứng nhòe chữ trên máy yếu.
+
 ## Những điều còn chờ
 
+- Quyết định nguồn video cho 70 bài đang dùng video không chính thức (xem mục trên).
 - Chốt danh sách nghệ sĩ và bài cuối cùng.
 - Có video nào đó cấm nhúng hay không thì chỉ biết khi chạy thật; vì vậy mới có phương án lùi về bản nghe thử.
 - Đọc lại điều khoản các nền tảng một lần nữa trước ngày công khai.

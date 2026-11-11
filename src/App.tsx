@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { calm, cover, play, useStore, type Artist, type Track } from './player';
+import { artistSrc, calm, cover, imgFallback, play, useStore, type Artist, type Track } from './player';
 import { IconArrowLeft, IconArrowRight, IconClose, IconPlay, IconSearch } from './Icons';
 
 // Bảng bài hát + trình phát tải sau để trang mở đầu hiện nhanh hơn
@@ -13,6 +13,7 @@ const poster = (w: number) =>
   `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260908_122011_59c97465-4d23-4fdc-ac40-f6832f573e28.png&w=${w}&q=85`;
 
 const showVideo = !calm && matchMedia('(min-width: 900px)').matches;
+const CARD_GAP = 216; // khoảng cách ngang giữa hai thẻ nghệ sĩ (px)
 const GENRE: Record<string, string> = { all: 'Tất cả', rap: 'Rap', pop: 'Pop', indie: 'Indie', ballad: 'Ballad' };
 
 function norm(s: string) {
@@ -258,6 +259,19 @@ function FramerRoll({
 }) {
   const count = artists.length;
   const stageRef = useRef<HTMLDivElement>(null);
+  const lastDiff = useRef(new Map<string, number>()); // vị trí đã hiển thị lần trước, ghi sau khi render xong
+  // khoảng cách vòng tròn tới thẻ giữa, để lặp vô tận
+  const diffOf = (idx: number) => {
+    let d = idx - activeIndex;
+    while (d > count / 2) d -= count;
+    while (d <= -count / 2) d += count;
+    return d;
+  };
+  useEffect(() => {
+    artists.forEach((a, idx) => lastDiff.current.set(a.id, diffOf(idx)));
+  });
+  // Số thẻ mỗi bên đủ phủ kín bề ngang màn hình; luôn nhỏ hơn nửa vòng để thẻ đang quay vòng (nhảy từ mép này sang mép kia) vẫn ẩn
+  const reach = Math.max(1, Math.min(Math.ceil(innerWidth / 2 / CARD_GAP), Math.ceil(count / 2) - 1));
 
   const stepRoll = (dir: number) => {
     if (count === 0) return;
@@ -290,12 +304,12 @@ function FramerRoll({
       >
         {artists.map((a, idx) => {
           // Tính khoảng cách vòng tròn (circular wrapped diff) để lặp vô tận
-          let diff = idx - activeIndex;
-          while (diff > count / 2) diff -= count;
-          while (diff <= -count / 2) diff += count;
+          const diff = diffOf(idx);
 
           const isCenter = diff === 0;
-          const isFar = Math.abs(diff) > 3;
+          const isFar = Math.abs(diff) > reach;
+          // thẻ quay vòng (diff nhảy hơn 1 bậc) thì đặt thẳng vào chỗ mới, không cho bay ngang qua giữa màn hình
+          const wrapped = Math.abs(diff - (lastDiff.current.get(a.id) ?? diff)) > 1;
 
           return (
             <motion.div
@@ -304,13 +318,13 @@ function FramerRoll({
               data-active={isCenter}
               initial={false}
               animate={{
-                x: diff * 216,
+                x: diff * CARD_GAP,
                 scale: Math.max(0.66, 1 - Math.abs(diff) * 0.13),
                 rotateY: diff * -16,
                 z: -Math.abs(diff) * 70,
-                opacity: isFar ? 0 : Math.max(0.18, 1 - Math.abs(diff) * 0.26),
+                opacity: isFar ? 0 : Math.max(0.35, 1 - Math.abs(diff) * 0.22),
               }}
-              transition={{ type: 'spring', stiffness: 340, damping: 28 }}
+              transition={wrapped ? { duration: 0 } : { type: 'spring', stiffness: 340, damping: 28 }}
               style={{
                 zIndex: 30 - Math.abs(diff),
                 pointerEvents: Math.abs(diff) > 2 ? 'none' : 'auto',
@@ -323,8 +337,16 @@ function FramerRoll({
                 }
               }}
             >
-              <div className="card-thumb">
-                <img src={a.image} alt={a.name} draggable={false} loading="lazy" />
+              <div className="card-thumb" data-initial={a.name[0]}>
+                {/* không lazy: thẻ nằm ngoài màn hình rồi mới trượt vào, lazy làm ảnh trống lúc đang lướt */}
+                <img
+                  src={artistSrc(a, 480)}
+                  alt={a.name}
+                  draggable={false}
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                  onError={imgFallback(a)}
+                />
                 <div className="card-glass-glow" />
               </div>
               <div className="card-meta">

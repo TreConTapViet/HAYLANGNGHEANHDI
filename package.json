@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "data": "node scripts/build-data.mjs"
+    "data": "node scripts/build-data.mjs",
+    "test": "node --test scripts/lyrics.test.mjs"
   },
   "dependencies": {
     "motion": "^14.12.0",

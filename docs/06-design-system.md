@@ -116,6 +116,23 @@ Thang 4px: `4 8 12 16 24 32 48 64 96`. Bo góc: `8 / 16 / 28 / 999px`.
 - Không chỉ dùng màu để báo lỗi.
 - Tôn trọng "giảm chuyển động".
 
+## Lời bài hát (thêm 12/11/2026)
+
+| Hiệu ứng | Cách làm | Ghi chú hiệu năng |
+|---|---|---|
+| Quét sáng từng chữ | Chữ là `inline-block`, nền gradient `background-clip: text`; ranh giới sáng–mờ dời theo `--p`, có vùng chuyển mềm 30% | Chỉ chữ của dòng đang hát đổi mỗi khung hình |
+| Quầng sáng màu bìa | `drop-shadow` theo `--glow`. Màu lấy bằng cách thu ảnh bìa về 8×8 điểm ảnh rồi lấy trung bình, làm sáng lên | Chỉ áp cho dòng đang hát |
+| Chữ trồi lên, phóng nhẹ | Chữ đang hát có `data-on`: dịch lên 0,07em, phóng 1,08 lần, chuyển 0,35 giây | Chỉ dùng `transform` |
+| Dòng xa mờ và nhòe | Độ mờ `1 − d×0,17`, nhòe `d×0,55px`, với d là khoảng cách tới dòng đang hát (tối đa 4) | Chỉ đổi khi chuyển dòng (vài giây một lần) |
+| Tự cuộn | Cả khối lời dịch bằng `transform` để dòng đang hát nằm ở khoảng 42% chiều cao | Chạy trên compositor |
+| Lời vào/ra | Khối lời mờ dần vào và trồi lên 28px khi mở trình phát | |
+
+Chữ lời bài hát: Inter 700, cỡ `clamp(1.45rem, 2.5vw, 2.4rem)` (điện thoại `clamp(1.25rem, 5.4vw, 1.75rem)`). Khi bật "giảm chuyển động": tắt nhòe, tắt trồi chữ, tắt chuyển tiếp.
+
+## Biểu tượng (cập nhật 12/11/2026)
+
+Dùng **Lucide** (nét 2px, bo tròn, khung 24×24), mã SVG chép nguyên vào `src/Icons.tsx`. Nút Phát/Tạm dừng lớn tô đặc (`fill="currentColor"`) cho nổi bật; các nút khác để nét. Bài có lời đồng bộ có biểu tượng micro (`mic-vocal`) trong danh sách.
+
 ## Về ngôn ngữ
 
 Giao diện bằng tiếng Việt có dấu đầy đủ, giọng thân thiện như nói chuyện với bạn ("Chạm để nghe", "Bài này chỉ nghe thử được 30 giây"). Tên nghệ sĩ và bài giữ nguyên chính tả gốc: "HIEUTHUHAI", "tlinh", "Vũ.".

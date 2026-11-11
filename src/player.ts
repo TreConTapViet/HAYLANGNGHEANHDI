@@ -8,6 +8,8 @@ export type Track = {
   album: string | null;
   art: string | null; // bìa iTunes 100x100, đổi cỡ bằng cover()
   preview: string | null; // bản nghe thử 30s
+  lyrics?: boolean; // có file public/data/lyrics/<id>.json
+  lyricsOffset?: number; // giây, chỉnh tay khi video lệch so với bản thu
 };
 export type Artist = { id: string; name: string; genre: string; image: string; tracks: Track[] };
 
@@ -50,6 +52,17 @@ const get = useStore.getState;
 
 export const cover = (t: Track, size: number) =>
   t.art?.replace('100x100bb', `${size}x${size}bb`) ?? `https://i.ytimg.com/vi/${t.id}/mqdefault.jpg`;
+
+// Ảnh kênh YouTube chọn cỡ qua đuôi "=s900"; thẻ chỉ rộng ~240px nên lấy cỡ vừa đủ cho màn hình nét
+export const artistSrc = (a: Artist, px: number) => a.image.replace(/=s\d+/, `=s${px}`);
+
+/** Ảnh nghệ sĩ lỗi thì đổi sang ảnh video đầu tiên của nghệ sĩ, lỗi nữa thì ẩn (khung hiện chữ cái đầu). */
+export const imgFallback = (a: Artist) => (e: { currentTarget: HTMLImageElement }) => {
+  const img = e.currentTarget;
+  const backup = `https://i.ytimg.com/vi/${a.tracks[0].id}/mqdefault.jpg`;
+  if (img.src !== backup) img.src = backup;
+  else img.style.visibility = 'hidden';
+};
 
 /** Khách muốn ít chuyển động hoặc đang tiết kiệm dữ liệu: bỏ video nền và chuyển cảnh. */
 export const calm: boolean =
@@ -161,7 +174,7 @@ export async function play(artist: Artist, track: Track) {
     width: '100%',
     height: '100%',
     videoId: track.id,
-    playerVars: { playsinline: 1, rel: 0, autoplay: 1, cc_load_policy: 1 },
+    playerVars: { playsinline: 1, rel: 0, autoplay: 1, iv_load_policy: 3 }, // lời đã hiện riêng nên không bật phụ đề
     events: {
       onReady: () => {
         const cur = get().now?.track;

@@ -1,5 +1,5 @@
-// Đọc content/artists/*.md → hỏi iTunes (album, bìa, bản nghe thử) + Spotify (ảnh chân dung, tùy chọn)
-// → ghi public/data/songs.json. Chỉ lưu đường link ảnh gốc, không tải ảnh về.
+// Đọc content/artists/*.md → hỏi iTunes (album, bìa, bản nghe thử) + LRCLIB (lời đồng bộ) + Spotify (ảnh chân dung, tùy chọn)
+// → ghi public/data/songs.json và public/data/lyrics/<id>.json. Chỉ lưu đường link ảnh gốc, không tải ảnh về.
 import fs from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
@@ -60,6 +60,29 @@ async function spotifyPortrait(name) {
   return hit && { image: hit.images[0].url, link: hit.external_urls.spotify };
 }
 
+// LRCLIB: lời đồng bộ theo dòng, miễn phí, không cần khóa. Lời bài hát có bản quyền: xem docs/08-decisions.md (ADR-008).
+async function lrclib(artist, title, seconds) {
+  const url = `https://lrclib.net/api/search?artist_name=${encodeURIComponent(artist)}&track_name=${encodeURIComponent(title)}`;
+  const hits = await getJson(url, { headers: { 'User-Agent': 'nhac-viet/0.1 (du an ca nhan)' } }).catch(() => []);
+  const a = norm(artist);
+  const t = norm(title.replace(/\(.*?\)/g, ''));
+  return hits
+    .filter((h) => h.syncedLyrics && norm(h.artistName).includes(a) && norm(h.trackName).startsWith(t))
+    .filter((h) => VARIANT.test(t) || !VARIANT.test(norm(h.trackName)))
+    .sort((x, y) => (seconds ? Math.abs(x.duration - seconds) - Math.abs(y.duration - seconds) : 0))[0];
+}
+
+// "[00:12.34][01:02.00] lời" → [[12.34, "lời"], [62, "lời"]], sắp theo giờ
+function parseLrc(lrc) {
+  const rows = [];
+  for (const line of lrc.split('\n')) {
+    const stamps = [...line.matchAll(/\[(\d+):(\d+(?:\.\d+)?)\]/g)];
+    const text = line.replace(/\[[^\]]*\]/g, '').trim();
+    for (const s of stamps) rows.push([Math.round((+s[1] * 60 + +s[2]) * 100) / 100, text]);
+  }
+  return rows.sort((x, y) => x[0] - y[0]);
+}
+
 // Ảnh nét nhất có sẵn trong các video của nghệ sĩ; mqdefault là cỡ nhỏ nhưng không có viền đen như hqdefault
 async function ytThumb(ids) {
   for (const id of ids) {
@@ -80,6 +103,8 @@ for (const f of (await fs.readdir(DIR)).filter((f) => f.endsWith('.md') && f !==
   for (const t of a.tracks) {
     assert(t.title, `${f}: có bài thiếu title`);
     assert.match(String(t.youtube), /^[\w-]{11}$/, `${f}: ID YouTube sai ở "${t.title}"`);
+    for (const k of ['lyricsOffset', 'seconds'])
+      assert(t[k] === undefined || typeof t[k] === 'number', `${f}: ${k} phải là số giây ở "${t.title}"`);
   }
   for (const key of [a.id, ...a.tracks.map((t) => t.youtube)]) {
     assert(!seen.has(key), `${f}: trùng "${key}"`);
@@ -88,6 +113,10 @@ for (const f of (await fs.readdir(DIR)).filter((f) => f.endsWith('.md') && f !==
   configs.push(a);
 }
 configs.sort((x, y) => x.order - y.order);
+
+const LYRICS_DIR = path.join(ROOT, 'public', 'data', 'lyrics');
+await fs.rm(LYRICS_DIR, { recursive: true, force: true }); // bài đã bỏ khỏi danh sách thì bỏ luôn file lời
+await fs.mkdir(LYRICS_DIR, { recursive: true });
 
 const report = [];
 const artists = [];
@@ -114,7 +143,18 @@ for (const a of configs) {
       hit = pickSong(await itunes(`${query} ${t.title}`), query, t.title);
     }
     if (!hit) report.push(`[${a.name}] "${t.title}": iTunes không khớp → không có bản nghe thử, bìa lấy từ video`);
-    console.log(`  ${hit ? '✓' : '·'} ${t.title}`);
+
+    // chọn phiên bản lời có độ dài gần video nhất (seconds trong file .md), không có thì theo bản trên iTunes
+    const lrc = await lrclib(query, t.title, t.seconds ?? (hit && hit.trackTimeMillis / 1000));
+    if (lrc && t.seconds && Math.abs(lrc.duration - t.seconds) > 3)
+      report.push(`[${a.name}] "${t.title}": bản lời dài ${Math.round(lrc.duration)}s, video ${t.seconds}s → lời có thể lệch, chỉnh bằng lyricsOffset`);
+    if (lrc) {
+      // mỗi bài một file nhỏ, chỉ tải khi bài đó được phát
+      const lines = parseLrc(lrc.syncedLyrics);
+      await fs.writeFile(path.join(LYRICS_DIR, `${t.youtube}.json`), JSON.stringify({ duration: lrc.duration, lines }));
+    } else report.push(`[${a.name}] "${t.title}": LRCLIB không có lời đồng bộ`);
+    console.log(`  ${hit ? '✓' : '·'}${lrc ? '♪' : ' '} ${t.title}`);
+
     tracks.push({
       id: t.youtube,
       title: t.title,
@@ -123,6 +163,8 @@ for (const a of configs) {
       album: hit?.collectionName ?? null,
       art: hit?.artworkUrl100 ?? null,
       preview: hit?.previewUrl ?? null,
+      lyrics: !!lrc,
+      ...(t.lyricsOffset ? { lyricsOffset: t.lyricsOffset } : {}),
     });
   }
   artists.push({
@@ -138,5 +180,7 @@ for (const a of configs) {
 await fs.mkdir(path.join(ROOT, 'public', 'data'), { recursive: true });
 await fs.writeFile(path.join(ROOT, 'public', 'data', 'songs.json'), JSON.stringify(artists));
 const all = artists.flatMap((a) => a.tracks);
-console.log(`\nXong: ${artists.length} nghệ sĩ, ${all.length} bài, ${all.filter((t) => t.preview).length} bài có bản nghe thử.`);
+console.log(
+  `\nXong: ${artists.length} nghệ sĩ, ${all.length} bài, ${all.filter((t) => t.preview).length} bài có bản nghe thử, ${all.filter((t) => t.lyrics).length} bài có lời đồng bộ.`,
+);
 if (report.length) console.log('Cần xem lại:\n - ' + report.join('\n - '));

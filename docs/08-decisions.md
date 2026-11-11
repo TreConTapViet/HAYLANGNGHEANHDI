@@ -57,6 +57,23 @@ Mỗi mục trả lời bốn câu: *Chuyện gì khiến phải chọn? Chọn 
 - **Đổi lại:** màn đĩa than bớt "sạch" hơn so với ý tưởng ban đầu. Bù lại, đúng điều khoản và an toàn lâu dài.
 - **Cần làm thêm:** đọc toàn bộ điều khoản YouTube API Services trước ngày công khai (mình mới đọc phần quy định khung phát).
 - **Nghĩ lại khi:** muốn giao diện chỉ có đĩa thuần túy. Lúc đó phải đổi sang nguồn khác được phép phát không kèm khung hình.
+- **Cập nhật 12/11/2026:** khi chuyển sang lời bài hát làm phần chính, người dùng muốn "xóa video/MV". Không xóa hẳn được vì quy định trên, nên chọn **thu video thành ô nhỏ** (≥200×200px, không phủ gì lên) ở cột phải hoặc dưới lời. Thẻ nhỏ chỉnh lại khung video từ 195px lên đúng 200px.
+
+## ADR-008 · Lời bài hát từ LRCLIB, giờ từng chữ là ước lượng
+
+- **Chuyện gì:** người dùng muốn lời hiện như Spotify: chữ sáng lên khi nhạc hát tới, phần còn lại mờ đi.
+- **Chọn:** lấy lời đồng bộ từ **LRCLIB** (miễn phí, không cần khóa) lúc chuẩn bị dữ liệu, mỗi bài một file `public/data/lyrics/<id>.json`, chỉ tải khi bài đó được phát. Đã thử: 102/103 bài có lời.
+- **Đổi lại:**
+  - LRCLIB chỉ có giờ **theo dòng**, không bài nào có giờ theo từng chữ. Giờ từng chữ được **ước lượng**: chia thời gian hát của dòng theo độ dài chữ, tối đa khoảng 0,42 giây mỗi chữ. Đoạn ngân dài hoặc rap nhanh có thể lệch nhẹ trong một dòng; dòng thì luôn đúng giờ.
+  - Lời được canh theo **bản thu gốc**. Video phải có tiếng giống hệt bản thu thì lời mới khớp; video bị cắt, đổi tốc độ hay có đoạn mở đầu dài sẽ lệch. Trình phát so độ dài video với bản lời, lệch hơn 3 giây thì báo cho người nghe; mỗi bài chỉnh tay được bằng `lyricsOffset`.
+  - **Bản quyền:** lời bài hát là tác phẩm có bản quyền, LRCLIB do cộng đồng đóng góp, không có giấy phép. Dùng cá nhân thì ổn; công khai thì phải cân nhắc (bỏ lời, hoặc dùng nhà cung cấp có giấy phép như Musixmatch hay LyricFind, đều tốn phí).
+- **Nghĩ lại khi:** có nguồn lời có giờ từng chữ (định dạng LRC mở rộng), hoặc trước khi công khai trang.
+
+## ADR-009 · Biểu tượng chép nguyên từ Lucide
+
+- **Chọn:** chép nguyên mã SVG của 18 biểu tượng từ `lucide-static@1.72.0` vào `src/Icons.tsx` (giấy phép ISC, chỉ cần giữ ghi chú nguồn). Không thêm thư viện vào dự án.
+- **Đổi lại:** muốn thêm biểu tượng phải chép thêm bằng tay. Bộ chung một kiểu nét, không lẫn kiểu như các biểu tượng vẽ tay trước đó.
+- **Không chọn:** SVG Repo (mỗi biểu tượng một giấy phép khác nhau, phải kiểm từng cái).
 
 ---
 
