@@ -36,6 +36,10 @@ const get = useStore.getState;
 export const cover = (t: Track, size: number) =>
   t.art?.replace('100x100bb', `${size}x${size}bb`) ?? `https://i.ytimg.com/vi/${t.id}/mqdefault.jpg`;
 
+/** Khách muốn ít chuyển động hoặc đang tiết kiệm dữ liệu: bỏ video nền và chuyển cảnh. */
+export const calm: boolean =
+  matchMedia('(prefers-reduced-motion: reduce)').matches || !!(navigator as any).connection?.saveData;
+
 declare const YT: any;
 let yt: any;
 let api: Promise<void> | undefined;

@@ -92,9 +92,11 @@ Code đơn giản hơn thiết kế trong các file 02–06 ở những điểm 
 | GSAP + Lenis + Embla | CSS thuần: `scroll-snap` và `animation-timeline: view()` | Chạy trên compositor, không tốn JS. Firefox chưa hỗ trợ nên thấy dải lướt phẳng |
 | Thanh tiến độ và tua riêng | Dùng thanh của chính khung YouTube | Khung YouTube bắt buộc hiển thị, không cần làm hai lần |
 | `songs.json` có nhiều trường | Rút gọn: xem kiểu `Track` trong `src/player.ts` | |
-| 16 nghệ sĩ | 8 nghệ sĩ, 50 bài | Chưa tìm ID cho 8 người còn lại |
+| Video nền ở mọi thiết bị | Chỉ màn hình rộng từ 900px; điện thoại dùng ảnh tĩnh có chuyển động nhẹ | Video nặng 19,7MB |
 
-Đã kiểm bằng Edge không giao diện (máy tính 1280×800 và khung điện thoại 390×844): YouTube phát được, chuyển bài được, thẻ nhỏ giữ khung video 278×200, console không lỗi. JS 120KB sau nén.
+Đủ 16 nghệ sĩ, 103 bài (94 bài có bản nghe thử dự phòng; 9 bài không có trên iTunes Việt Nam).
+
+Đã kiểm bằng Edge không giao diện (máy tính 1280×800 và khung điện thoại 390×844): YouTube phát được; kéo phần đầu bảng bài hát xuống thì đóng; vuốt trái trên đĩa sang bài kế; vuốt xuống thu thành thẻ nhỏ (khung video 278×200); video nền dừng khi cuộn khỏi màn hình; console không lỗi. JS ban đầu 72KB sau nén, phần trình phát 49KB tải sau.
 
 ## Những điều còn chờ
 

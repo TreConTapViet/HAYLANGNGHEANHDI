@@ -41,6 +41,15 @@ Phần dưới là ghi chú tự do cho người quản lý, script bỏ qua.
 | tlinh | tlinh.md | 6 | Xong |
 | Wren Evans | wren-evans.md | 6 | Xong |
 | AMEE | amee.md | 6 | Xong |
-| Low G, Obito, Hoàng Dũng, Vũ., Phương Ly, Bích Phương, Hà Anh Tuấn, Justatee | – | – | **Chưa tìm ID**, thêm theo cùng mẫu khi cần |
+| Low G | low-g.md | 7 | Xong (4 bài không có trên iTunes) |
+| Obito | obito.md | 7 | Xong (3 bài không có trên iTunes) |
+| Hoàng Dũng | hoang-dung.md | 6 | Xong |
+| Vũ. | vu.md | 7 | Xong |
+| Phương Ly | phuong-ly.md | 6 | Xong (1 bài không có trên iTunes) |
+| Bích Phương | bich-phuong.md | 7 | Xong (1 bài không có trên iTunes) |
+| Hà Anh Tuấn | ha-anh-tuan.md | 6 | Xong |
+| JustaTee | justatee.md | 7 | Xong |
 
-Các ID trên được tìm bằng công cụ tra cứu YouTube ngày 11/11/2026 và đối chiếu tên kênh. Chưa kiểm tra từng video có cho phép nhúng hay không.
+Tổng: 16 nghệ sĩ, 103 bài. Các ID được tra trên YouTube ngày 11/11/2026 và đối chiếu ID kênh chính thức. `npm run data` kiểm tra lại từng video qua oEmbed mỗi lần chạy và báo bài nào đã mất.
+
+Bài "không có trên iTunes" vẫn nghe được trọn bài qua YouTube; chỉ thiếu ảnh bìa album (dùng ảnh video thay) và bản nghe thử 30 giây dự phòng.

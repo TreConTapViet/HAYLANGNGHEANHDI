@@ -29,7 +29,7 @@ const itunes = async (term) =>
 
 function pickSong(hits, artist, title) {
   const a = new RegExp(`(^| )${norm(artist)}( |$)`);
-  const t = norm(title);
+  const t = norm(title.replace(/\(.*?\)/g, '')); // "EmmE (Em, Tôi)" trên iTunes chỉ là "EmmE"
   return hits
     .filter((h) => a.test(norm(h.artistName)) && norm(h.trackName).startsWith(t))
     .filter((h) => VARIANT.test(t) || !VARIANT.test(norm(h.trackName)))
@@ -63,8 +63,9 @@ async function spotifyPortrait(name) {
 // Ảnh nét nhất có sẵn trong các video của nghệ sĩ; mqdefault là cỡ nhỏ nhưng không có viền đen như hqdefault
 async function ytThumb(ids) {
   for (const id of ids) {
-    const max = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
-    if ((await fetch(max, { method: 'HEAD' })).ok) return max;
+    // bản webp nhẹ hơn jpg khoảng 35–55%
+    for (const max of [`https://i.ytimg.com/vi_webp/${id}/maxresdefault.webp`, `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`])
+      if ((await fetch(max, { method: 'HEAD' })).ok) return max;
   }
   return `https://i.ytimg.com/vi/${ids[0]}/mqdefault.jpg`;
 }
@@ -96,6 +97,14 @@ for (const a of configs) {
   const pool = await itunes(query);
   const portrait = await spotifyPortrait(query).catch((e) => (report.push(`[${a.name}] Spotify lỗi: ${e.message}`), null));
   if (process.env.SPOTIFY_CLIENT_ID && !portrait) report.push(`[${a.name}] Spotify không có tên khớp "${query}", dùng ảnh video`);
+
+  // oEmbed: 404 = video đã mất, 401 = không cho nhúng. Không cần khóa.
+  await Promise.all(
+    a.tracks.map(async (t) => {
+      const { status } = await fetch(`https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${t.youtube}`);
+      if (status !== 200) report.push(`[${a.name}] "${t.title}": YouTube trả ${status}, video có thể đã mất hoặc cấm nhúng`);
+    }),
+  );
 
   const tracks = [];
   for (const t of a.tracks) {
