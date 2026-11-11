@@ -79,6 +79,23 @@ Trạng thái hiện tại: **chưa có dòng code nào trong repo, chỉ có t�
 | T1, T2, T4 | | Trang thử đã dựng (nằm ngoài repo); **chờ bạn thử trên máy thật** |
 | T5, T6 | | chưa làm |
 
+## Bản dựng đầu tiên (11/11/2026): code khác tài liệu ở đâu
+
+Website đã được dựng. Chạy: `npm install`, `npm run dev`. Dữ liệu: `npm run data`. Bản phát hành: `npm run build`.
+
+Code đơn giản hơn thiết kế trong các file 02–06 ở những điểm sau (các file đó chưa sửa lại):
+
+| Tài liệu ghi | Code thật | Lý do |
+|---|---|---|
+| Tải ảnh về, đổi WebP bằng sharp | Chỉ lưu **link ảnh gốc** (iTunes, YouTube, Spotify) | Bỏ được cả bước xử lý ảnh lẫn câu hỏi T5 về việc phục vụ lại ảnh |
+| Tính màu chủ đạo lúc chuẩn bị | Nền trình phát là ảnh bìa phóng to làm mờ | Không cần tính màu |
+| GSAP + Lenis + Embla | CSS thuần: `scroll-snap` và `animation-timeline: view()` | Chạy trên compositor, không tốn JS. Firefox chưa hỗ trợ nên thấy dải lướt phẳng |
+| Thanh tiến độ và tua riêng | Dùng thanh của chính khung YouTube | Khung YouTube bắt buộc hiển thị, không cần làm hai lần |
+| `songs.json` có nhiều trường | Rút gọn: xem kiểu `Track` trong `src/player.ts` | |
+| 16 nghệ sĩ | 8 nghệ sĩ, 50 bài | Chưa tìm ID cho 8 người còn lại |
+
+Đã kiểm bằng Edge không giao diện (máy tính 1280×800 và khung điện thoại 390×844): YouTube phát được, chuyển bài được, thẻ nhỏ giữ khung video 278×200, console không lỗi. JS 120KB sau nén.
+
 ## Những điều còn chờ
 
 - Chốt danh sách nghệ sĩ và bài cuối cùng.
