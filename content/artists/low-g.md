@@ -8,28 +8,35 @@ spotifyQuery: Low G
 tracks:
   - title: In Love
     feat: JustaTee
-    youtube: oE4dKPN3e-U
-    kind: lyric
+    youtube: T7ksmtaVeOk
+    kind: mv
+    seconds: 201
   - title: Love Game
     feat: tlinh
     youtube: cI5b71ZBAn0
     kind: lyric
+    seconds: 227
   - title: Đừng Để Tiền Rơi
     feat: Anh Phan
-    youtube: IGHBSyXKZ8Y
-    kind: lyric
+    youtube: u4Pk8-1Hxiw
+    kind: mv
+    seconds: 179
   - title: Simp Gái 808
-    youtube: vDZlQETS4Vw
-    kind: lyric
+    youtube: lDu412aW0QY
+    kind: audio
+    seconds: 162
   - title: An Thần
-    youtube: 14yox5KaRhU
-    kind: lyric
+    youtube: wKiSIO6Tffo
+    kind: audio
+    seconds: 174
   - title: Nét
-    youtube: 3mvIhUZt8hE
-    kind: lyric
+    youtube: Jg25BxSAgkM
+    kind: mv
+    seconds: 200
   - title: Nhiều Hơn
     youtube: qzK5je4-pNc
     kind: lyric
+    seconds: 186
 image: >-
   https://yt3.googleusercontent.com/3rgAoV45znwr0AS0MuV-Wqyvhfec8ierc1IG4yYP3xIzEYg7md8TKj34PWgJZOl0AdG7D7ZUZZU=s900-c-k-c0x00ffffff-no-rj
 ---

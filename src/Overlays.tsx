@@ -62,6 +62,35 @@ function useKey(active: boolean, onKey: (e: KeyboardEvent) => void) {
   }, [active]);
 }
 
+/**
+ * Màu chủ đạo của ảnh bìa, dạng "r, g, b": thu ảnh về 8×8 điểm ảnh, lấy trung bình rồi làm sáng lên để luôn thấy trên nền tối.
+ * Dùng cho quầng sáng của lời và kính màu của danh sách, thẻ thu gọn. Máy chủ ảnh của iTunes và YouTube cho phép đọc điểm ảnh (CORS).
+ */
+function useCoverTint(src: string | null) {
+  const [tint, setTint] = useState('134, 162, 255');
+  useEffect(() => {
+    if (!src) return;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = c.height = 8;
+      const g = c.getContext('2d', { willReadFrequently: true })!;
+      g.drawImage(img, 0, 0, 8, 8);
+      const px = g.getImageData(0, 0, 8, 8).data;
+      const avg = [0, 0, 0];
+      for (let i = 0; i < px.length; i += 4) for (let k = 0; k < 3; k++) avg[k] += px[i + k] / (px.length / 4);
+      const gain = Math.min(2.4, 230 / Math.max(1, ...avg));
+      setTint(avg.map((v) => Math.round(v * gain)).join(', '));
+    };
+    img.src = src;
+    return () => {
+      img.onload = null;
+    };
+  }, [src]);
+  return tint;
+}
+
 function formatTime(s: number) {
   if (!s || isNaN(s) || s < 0) return '0:00';
   const m = Math.floor(s / 60);
@@ -295,6 +324,7 @@ function Player() {
   const muted = useStore((s) => s.muted);
   const volume = useStore((s) => s.volume);
   const queueOpen = useStore((s) => s.queueOpen);
+  const tint = useCoverTint(now ? cover(now.track, 100) : null);
 
   const setMini = (mini: boolean) => morph(() => set({ mini }));
 
@@ -343,6 +373,7 @@ function Player() {
       data-mini={mini}
       data-preview={preview}
       data-queue={showQueue}
+      style={{ '--glow': tint } as React.CSSProperties}
       aria-label="Trình phát nhạc"
       onClick={() => mini && setMini(false)}
     >

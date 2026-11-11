@@ -129,6 +129,25 @@ Thang 4px: `4 8 12 16 24 32 48 64 96`. Bo góc: `8 / 16 / 28 / 999px`.
 
 Chữ lời bài hát: Inter 700, cỡ `clamp(1.45rem, 2.5vw, 2.4rem)` (điện thoại `clamp(1.25rem, 5.4vw, 1.75rem)`). Khi bật "giảm chuyển động": tắt nhòe, tắt trồi chữ, tắt chuyển tiếp.
 
+## Kính lỏng cho danh sách và thẻ thu gọn (thêm 12/11/2026)
+
+Theo phong cách Liquid Glass của Apple, viết bằng CSS thuần trong `src/styles.css` (mục "Kính lỏng"):
+
+| Lớp | Cách làm |
+|---|---|
+| Thân kính | `backdrop-filter: blur(32px) saturate(190%) brightness(1.08)` trên nền gradient nhuộm `rgba(var(--glow), 0.32 → 0.1)` |
+| Viền bắt sáng | `inset 0 1px 0` trắng 55% ở mép trên, viền mảnh trắng 22% quanh kính |
+| Ánh màu bên trong và bên ngoài | `inset 0 0 36px` và `0 0 64px` theo `--glow` |
+| Bóng loáng | `::before` có điểm sáng góc trên trái và vệt chéo 115°, đặt `z-index: -1` để nằm dưới nội dung (không phủ khung YouTube) |
+| Bài đang phát | Viên kính sáng hơn: gradient trắng → màu bài, viền sáng phía trên |
+| Bo góc | 28px cho cột danh sách, 24px cho thẻ thu gọn |
+
+`--glow` là màu chủ đạo của ảnh bìa bài đang phát (thu ảnh về 8×8 điểm ảnh, lấy trung bình, làm sáng lên), đặt trên `.player`; lời, danh sách và thẻ thu gọn cùng dùng. Đổi bài thì màu kính chuyển dần trong 0,8 giây.
+
+## Dải chọn nghệ sĩ (cập nhật 12/11/2026)
+
+Dải cuộn tự trôi, 36px/giây (rê chuột: 6px/giây; giảm chuyển động: đứng yên). Thẻ rộng `clamp(150px, 40vw, 210px)`, cách nhau 20px; hai mép mờ dần bằng `mask-image`. Rê chuột hoặc dùng phím Tab tới thẻ thì thẻ nhấc lên 6px và phóng 1,04 lần, có viền sáng. Không còn nút ← →.
+
 ## Biểu tượng (cập nhật 12/11/2026)
 
 Dùng **Lucide** (nét 2px, bo tròn, khung 24×24), mã SVG chép nguyên vào `src/Icons.tsx`. Nút Phát/Tạm dừng lớn tô đặc (`fill="currentColor"`) cho nổi bật; các nút khác để nét. Bài có lời đồng bộ có biểu tượng micro (`mic-vocal`) trong danh sách.

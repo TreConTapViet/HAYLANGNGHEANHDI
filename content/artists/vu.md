@@ -7,29 +7,36 @@ youtubeChannel: UCePWSQHSdXqzQlzyJfwY1Jg
 spotifyQuery: Vũ.
 tracks:
   - title: Lạ Lùng
-    youtube: U2sgcEd9Tjk
-    kind: lyric
+    youtube: F5tS5m86bOI
+    kind: mv
+    seconds: 262
   - title: Bình Yên
     feat: Binz
-    youtube: rPtUl1GTV0s
-    kind: lyric
+    youtube: f9P7_qWrf38
+    kind: mv
+    seconds: 203
   - title: Bước Qua Mùa Cô Đơn
-    youtube: _Lste0Plenw
-    kind: lyric
+    youtube: n6Pnzi6r9NU
+    kind: mv
+    seconds: 343
   - title: Những Lời Hứa Bỏ Quên
     feat: Dear Jane
     youtube: h6RONxjPBf4
     kind: lyric
+    seconds: 259
   - title: Bước Qua Nhau
-    youtube: OvrRSFziopI
-    kind: lyric
+    youtube: ixdSsW5n2rI
+    kind: mv
+    seconds: 337
   - title: Anh Nhớ Ra
     feat: Trang
     youtube: 11XkLOIsLHI
     kind: lyric
+    seconds: 277
   - title: Nếu Những Tiếc Nuối
-    youtube: RztaD0F1gXc
-    kind: lyric
+    youtube: 9_JV3fyPv64
+    kind: mv
+    seconds: 261
 image: >-
   https://yt3.googleusercontent.com/bpKh5MyMojA9WcirbVyVO0I0F0ZqvIMLodbqT_g8pjEUXBNo2ZrZCmiDZ5PTo8lrCBdlTbMd3Q=s900-c-k-c0x00ffffff-no-rj
 ---

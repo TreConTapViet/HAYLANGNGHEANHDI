@@ -52,6 +52,6 @@ Phần dưới là ghi chú tự do cho người quản lý, script bỏ qua.
 | Hà Anh Tuấn | ha-anh-tuan.md | 6 | Xong |
 | JustaTee | justatee.md | 7 | Xong |
 
-Tổng: 16 nghệ sĩ, 103 bài. Các ID được tra trên YouTube ngày 11/11/2026 và đối chiếu ID kênh chính thức. `npm run data` kiểm tra lại từng video qua oEmbed mỗi lần chạy và báo bài nào đã mất.
+Tổng: 16 nghệ sĩ, 103 bài. Ngày 12/11/2026 đã rà lại toàn bộ: **103/103 bài** dùng video kênh chính thức hoặc kênh "<nghệ sĩ> - Topic" (đối chiếu `videoDetails.channelId`, không còn bản tải lại hay remix/karaoke). Trường `seconds` ghi độ dài video để chọn đúng phiên bản lời. `npm run data` kiểm tra lại từng video qua oEmbed mỗi lần chạy và báo bài nào đã mất.
 
 Bài "không có trên iTunes" vẫn nghe được trọn bài qua YouTube; chỉ thiếu ảnh bìa album (dùng ảnh video thay) và bản nghe thử 30 giây dự phòng.

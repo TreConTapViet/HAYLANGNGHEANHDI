@@ -9,22 +9,28 @@ tracks:
   - title: Cứu Lấy Âm Nhạc
     youtube: 3K6PRfAp6O4
     kind: lyric
+    seconds: 224
   - title: Từng Quen
     youtube: zepHPnUDROE
     kind: lyric
+    seconds: 175
   - title: Thích Em Hơi Nhiều
     youtube: 3ytVWPFnBEg
     kind: lyric
+    seconds: 172
   - title: Tò Te Tí
     feat: itsnk
-    youtube: pIf26mylYmQ
-    kind: lyric
+    youtube: aCqmdPaTVSg
+    kind: mv
+    seconds: 195
   - title: Gặp May
     youtube: _Gv6URIvQzY
     kind: lyric
+    seconds: 185
   - title: Call Me
-    youtube: LYdvP4k-SS0
-    kind: lyric
+    youtube: DlION6FK-Yc
+    kind: mv
+    seconds: 215
 image: >-
   https://yt3.googleusercontent.com/dkFg6P3m9BzIqJJVsuo9P3J1Ku3XtocbSfhD3Q92-vS_bvZiATrzZCWXAtefKtKh2TN5eTJXqA=s900-c-k-c0x00ffffff-no-rj
 ---

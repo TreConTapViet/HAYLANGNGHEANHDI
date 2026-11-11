@@ -213,38 +213,16 @@ small { color: var(--mute); font-size: 0.82rem; }
   flex: none;
 }
 
-/* ---------- Framer Roll: Vòng cuộn đĩa 3D vô tận ---------- */
-.roll-container {
-  position: relative;
-  width: 100%;
-  padding: 32px 0 24px;
-  overflow: hidden;
-}
-.roll-stage {
-  position: relative;
-  height: 400px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 1200px;
-  transform-style: preserve-3d;
-  outline: none;
-  cursor: grab;
-  user-select: none;
-  touch-action: pan-y;
-}
-.roll-stage:active {
-  cursor: grabbing;
-}
-.roll-card {
-  position: absolute;
-  width: min(60vw, 240px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transform-style: preserve-3d;
-  cursor: pointer;
-}
+/* ---------- Dải nghệ sĩ tự trôi (roll) ----------
+   overflow: clip (không phải hidden) để phím Tab không làm khung tự cuộn lệch vị trí x mà JS đang giữ */
+.roll { --gap: 20px; position: relative; margin-top: 28px; padding: 14px 0 28px; overflow: clip; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+.roll:active { cursor: grabbing; }
+.roll[data-static='true'] { cursor: default; mask-image: none; -webkit-mask-image: none; }
+.roll-track { display: flex; gap: var(--gap); width: max-content; padding-left: var(--gap); }
+.roll[data-static='true'] .roll-track { margin: 0 auto; padding-left: 0; }
+.roll-card { width: clamp(150px, 40vw, 210px); flex: none; display: grid; justify-items: center; text-align: center; transition: transform 0.35s var(--ease); }
+.roll-card:hover, .roll-card:focus-visible { transform: translateY(-6px) scale(1.04); }
+.roll-card:hover .card-thumb, .roll-card:focus-visible .card-thumb { box-shadow: 0 20px 48px rgba(134, 162, 255, 0.32), 0 0 0 2px rgba(134, 162, 255, 0.65); }
 .card-thumb {
   position: relative;
   width: 100%;
@@ -253,9 +231,6 @@ small { color: var(--mute); font-size: 0.82rem; }
   overflow: hidden;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
   transition: box-shadow 0.3s;
-}
-.roll-card[data-active='true'] .card-thumb {
-  box-shadow: 0 20px 48px rgba(134, 162, 255, 0.32), 0 0 0 2px rgba(134, 162, 255, 0.65);
 }
 .card-thumb::before { content: attr(data-initial); position: absolute; inset: 0; display: grid; place-items: center; font: 600 4rem/1 Newsreader, Georgia, serif; color: rgba(255, 255, 255, 0.5); background: linear-gradient(135deg, #2a2350, #121222); }
 .card-thumb img {
@@ -290,16 +265,7 @@ small { color: var(--mute); font-size: 0.82rem; }
   margin-top: 3px;
 }
 
-/* Nút điều hướng vòng cuộn */
-.flow-nav {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 12px;
-  z-index: 5;
-}
-.flow-nav button, .controls button, .size, .sheet header button, .player-queue header button {
+.controls button, .size, .sheet header button, .player-queue header button {
   width: 46px;
   height: 46px;
   border-radius: 50%;
@@ -310,7 +276,7 @@ small { color: var(--mute); font-size: 0.82rem; }
   display: grid;
   place-items: center;
 }
-.flow-nav button:hover, .controls button:hover, .size:hover, .sheet header button:hover, .player-queue header button:hover {
+.controls button:hover, .size:hover, .sheet header button:hover, .player-queue header button:hover {
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.45);
   transform: scale(1.06);
@@ -346,6 +312,7 @@ kbd { padding: 3px 6px; border-radius: 5px; background: rgba(255, 255, 255, 0.08
    Màn rộng (≥1100px), ba cột:  [danh sách] [lời bài hát] [đĩa · tên bài · video · tiến độ · nút]
    Màn hẹp: đĩa nhỏ + tên bài trên cùng, lời ở giữa, video + nút ở dưới; danh sách là ngăn kéo từ trái. */
 .player {
+  --glow: 134, 162, 255; /* màu chủ đạo của bài, trình phát đặt lại theo ảnh bìa */
   position: fixed;
   z-index: 20;
   inset: 0;
@@ -420,7 +387,7 @@ kbd { padding: 3px 6px; border-radius: 5px; background: rgba(255, 255, 255, 0.08
 /* ---------- lời bài hát ----------
    --d: khoảng cách tới dòng đang hát (0–4) → dòng xa mờ và nhòe dần.
    --p: tiến độ hát của một chữ (0–1) → màu sáng quét qua chữ, kèm quầng sáng màu bìa (--glow). */
-.lyrics { grid-area: lyrics; position: relative; min-height: 0; overflow: hidden; --glow: 134, 162, 255; mask-image: linear-gradient(transparent, #000 14%, #000 80%, transparent); -webkit-mask-image: linear-gradient(transparent, #000 14%, #000 80%, transparent); animation: lyrics-in 0.7s var(--ease) both; }
+.lyrics { grid-area: lyrics; position: relative; min-height: 0; overflow: hidden; mask-image: linear-gradient(transparent, #000 14%, #000 80%, transparent); -webkit-mask-image: linear-gradient(transparent, #000 14%, #000 80%, transparent); animation: lyrics-in 0.7s var(--ease) both; }
 @keyframes lyrics-in { from { opacity: 0; transform: translateY(28px); } }
 .lyrics-roll { padding-bottom: 60vh; transition: transform 0.75s var(--ease); will-change: transform; }
 .ly { --d: 4; margin: 0 0 0.5em; padding-right: 8%; font: 700 clamp(1.45rem, 2.5vw, 2.4rem) / 1.28 Inter, system-ui, sans-serif; letter-spacing: -0.012em; cursor: pointer; transform-origin: left center; opacity: calc(1 - var(--d) * 0.17); filter: blur(calc(var(--d) * 0.55px)); transition: opacity 0.5s, filter 0.5s, transform 0.5s var(--ease); }
@@ -436,8 +403,8 @@ kbd { padding: 3px 6px; border-radius: 5px; background: rgba(255, 255, 255, 0.08
 .lyrics[data-calm='true'] .w[data-on] { transform: none; }
 
 /* ---------- cột danh sách trong trình phát ---------- */
-.player > .player-queue { position: absolute; z-index: 3; left: 40px; top: 72px; bottom: 32px; width: 340px; display: flex; flex-direction: column; text-align: left; background: var(--glass); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); overflow: hidden; }
-.player-queue header { display: flex; align-items: center; gap: 12px; padding: 16px 14px 12px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.player > .player-queue { position: absolute; z-index: 3; left: 40px; top: 72px; bottom: 32px; width: 340px; display: flex; flex-direction: column; text-align: left; border-radius: 28px; overflow: hidden; }
+.player-queue header { display: flex; align-items: center; gap: 12px; padding: 16px 14px 12px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
 .player-queue header img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
 .player-queue header div { flex: 1; min-width: 0; }
 .player-queue h3 { margin: 0; font-size: 1.05rem; font-weight: 600; }
@@ -460,7 +427,7 @@ kbd { padding: 3px 6px; border-radius: 5px; background: rgba(255, 255, 255, 0.08
   .meta h2 { font-size: 1.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .frame { justify-self: center; width: min(100%, 356px); height: 200px; aspect-ratio: auto; }
   .ly { font-size: clamp(1.25rem, 5.4vw, 1.75rem); }
-  .player > .player-queue { left: 0; top: 0; bottom: 0; width: min(86vw, 360px); border-radius: 0 20px 20px 0; border-left: 0; }
+  .player > .player-queue { left: 0; top: 0; bottom: 0; width: min(86vw, 360px); border-radius: 0 28px 28px 0; border-left: 0; }
 }
 @media (max-width: 600px) { .volume-slider { display: none; } }
 
@@ -473,10 +440,7 @@ kbd { padding: 3px 6px; border-radius: 5px; background: rgba(255, 255, 255, 0.08
   grid-template-areas: 'frame' 'meta' 'controls';
   row-gap: 6px;
   padding: 0 0 12px;
-  border-radius: 18px;
-  background: var(--glass);
-  border: 1px solid var(--line);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
+  border-radius: 24px;
   cursor: pointer;
   transition: none;
 }
@@ -491,6 +455,49 @@ kbd { padding: 3px 6px; border-radius: 5px; background: rgba(255, 255, 255, 0.08
 .player[data-mini='true'] > .size { top: 208px; left: auto; right: 8px; width: 38px; height: 38px; }
 /* đang nghe thử (khung video ẩn): nút phóng to lên góc trên */
 .player[data-mini='true'][data-preview='true'] > .size { top: 10px; }
+
+/* ---------- Kính lỏng (phong cách Liquid Glass của Apple) cho danh sách và thẻ thu gọn ----------
+   Nhuộm theo màu chủ đạo của bài (--glow). Lớp bóng sáng (::before) nằm DƯỚI nội dung, không phủ lên khung YouTube. */
+.player > .player-queue,
+.player[data-mini='true'] {
+  isolation: isolate;
+  background:
+    linear-gradient(160deg, rgba(var(--glow), 0.32), rgba(var(--glow), 0.1) 45%, rgba(255, 255, 255, 0.05)),
+    rgba(16, 16, 24, 0.34);
+  backdrop-filter: blur(32px) saturate(190%) brightness(1.08);
+  -webkit-backdrop-filter: blur(32px) saturate(190%) brightness(1.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 1px 0 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 36px rgba(var(--glow), 0.2),
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    0 0 64px rgba(var(--glow), 0.22);
+  transition: background 0.8s, box-shadow 0.8s;
+}
+/* điểm sáng ở góc trên và một vệt bóng chạy chéo, như mặt kính cong bắt đèn */
+.player > .player-queue::before,
+.player[data-mini='true']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 55% at 0% 0%, rgba(255, 255, 255, 0.3), transparent 52%),
+    linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.09) 44%, transparent 56%);
+}
+.player-queue li button[aria-current] {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(var(--glow), 0.3));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 6px 20px rgba(var(--glow), 0.28);
+}
+.player-queue li button:hover:not([aria-current]) { background: rgba(255, 255, 255, 0.1); }
+.player-queue .wave b { background: linear-gradient(#fff, rgb(var(--glow))); }
+:is(.player-queue, .player[data-mini='true']) small { color: rgba(255, 255, 255, 0.66); }
+.player[data-mini='true'] .controls .step-btn, .player[data-mini='true'] .controls .close-btn { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.24); }
+.player[data-mini='true'] .mini-progress-fill { background: linear-gradient(90deg, #fff, rgb(var(--glow))); }
 
 /* Toast thông báo */
 .toast {

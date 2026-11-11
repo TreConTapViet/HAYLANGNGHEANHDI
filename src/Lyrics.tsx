@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { calm, cover, getDuration, getTime, seek, showToast, useStore, type Track } from './player';
+import { calm, getDuration, getTime, seek, showToast, useStore, type Track } from './player';
 import { activeLine, timeLines, wordProgress, type Line } from './lrc';
 
 type Loaded = { lines: Line[]; duration: number } | 'none' | null;
@@ -30,26 +30,7 @@ export default function Lyrics({ track }: { track: Track }) {
     };
   }, [track]);
 
-  // màu phát sáng lấy từ ảnh bìa (máy chủ ảnh của iTunes và YouTube cho phép đọc điểm ảnh)
-  useEffect(() => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      const c = document.createElement('canvas');
-      c.width = c.height = 8;
-      const g = c.getContext('2d', { willReadFrequently: true })!;
-      g.drawImage(img, 0, 0, 8, 8);
-      const px = g.getImageData(0, 0, 8, 8).data;
-      const avg = [0, 0, 0];
-      for (let i = 0; i < px.length; i += 4) for (let c = 0; c < 3; c++) avg[c] += px[i + c] / (px.length / 4);
-      // làm sáng màu trung bình để quầng sáng luôn thấy được trên nền tối
-      const k = Math.min(2.4, 230 / Math.max(1, ...avg));
-      box.current?.style.setProperty('--glow', avg.map((v) => Math.round(v * k)).join(', '));
-    };
-    img.src = cover(track, 100);
-  }, [track]);
-
-  // vòng chạy theo nhạc
+  // vòng chạy theo nhạc (màu quầng sáng --glow do trình phát đặt, dùng chung với kính của danh sách)
   useEffect(() => {
     if (!data || data === 'none' || !roll.current) return;
     const { lines } = data;

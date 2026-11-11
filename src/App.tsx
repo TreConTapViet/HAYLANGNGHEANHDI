@@ -1,7 +1,7 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { motion, useAnimationFrame, useMotionValue } from 'motion/react';
 import { artistSrc, calm, cover, imgFallback, play, useStore, type Artist, type Track } from './player';
-import { IconArrowLeft, IconArrowRight, IconClose, IconPlay, IconSearch } from './Icons';
+import { IconClose, IconPlay, IconSearch } from './Icons';
 
 // Bảng bài hát + trình phát tải sau để trang mở đầu hiện nhanh hơn
 const Overlays = lazy(() => import('./Overlays'));
@@ -13,7 +13,6 @@ const poster = (w: number) =>
   `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260908_122011_59c97465-4d23-4fdc-ac40-f6832f573e28.png&w=${w}&q=85`;
 
 const showVideo = !calm && matchMedia('(min-width: 900px)').matches;
-const CARD_GAP = 216; // khoảng cách ngang giữa hai thẻ nghệ sĩ (px)
 const GENRE: Record<string, string> = { all: 'Tất cả', rap: 'Rap', pop: 'Pop', indie: 'Indie', ballad: 'Ballad' };
 
 function norm(s: string) {
@@ -138,7 +137,6 @@ function Hero() {
 function Flow({ artists }: { artists: Artist[] }) {
   const [selectedGenre, setSelectedGenre] = useState<string>('all');
   const [query, setQuery] = useState('');
-  const [activeIndex, setActiveIndex] = useState(0);
 
   const normQuery = norm(query);
 
@@ -149,11 +147,6 @@ function Flow({ artists }: { artists: Artist[] }) {
       return matchGenre && matchQuery;
     });
   }, [artists, selectedGenre, normQuery]);
-
-  // Reset về vị trí đầu khi đổi bộ lọc
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [selectedGenre, normQuery]);
 
   // Tìm bài hát tức thì theo từ khóa
   const matchedTracks = useMemo(() => {
@@ -173,7 +166,7 @@ function Flow({ artists }: { artists: Artist[] }) {
   return (
     <>
       <h2>Chọn một nghệ sĩ</h2>
-      <p className="hint">Vuốt ngang để xoay đĩa, chạm để mở danh sách bài.</p>
+      <p className="hint">Kéo ngang để lướt, chạm vào nghệ sĩ để mở danh sách bài.</p>
 
       {/* Bộ lọc thể loại & tìm kiếm */}
       <div className="flow-filter">
@@ -237,111 +230,127 @@ function Flow({ artists }: { artists: Artist[] }) {
       {filteredArtists.length === 0 ? (
         <p className="notice">Không tìm thấy nghệ sĩ nào phù hợp.</p>
       ) : (
-        <FramerRoll
-          artists={filteredArtists}
-          activeIndex={activeIndex}
-          onChangeIndex={setActiveIndex}
-        />
+        <ArtistRoll artists={filteredArtists} />
       )}
     </>
   );
 }
 
-/** Framer Roll: Vòng cuộn đĩa 3D vô tận, vuốt mượt mà qua mép tự động quay lại đầu mà không ngắt quãng */
-function FramerRoll({
-  artists,
-  activeIndex,
-  onChangeIndex,
-}: {
-  artists: Artist[];
-  activeIndex: number;
-  onChangeIndex: React.Dispatch<React.SetStateAction<number>>;
-}) {
-  const count = artists.length;
-  const stageRef = useRef<HTMLDivElement>(null);
-  const lastDiff = useRef(new Map<string, number>()); // vị trí đã hiển thị lần trước, ghi sau khi render xong
-  // khoảng cách vòng tròn tới thẻ giữa, để lặp vô tận
-  const diffOf = (idx: number) => {
-    let d = idx - activeIndex;
-    while (d > count / 2) d -= count;
-    while (d <= -count / 2) d += count;
-    return d;
-  };
-  useEffect(() => {
-    artists.forEach((a, idx) => lastDiff.current.set(a.id, diffOf(idx)));
+/**
+ * Dải nghệ sĩ tự trôi vô tận: rê chuột thì chậm lại, kéo thì cuộn theo tay rồi trôi theo quán tính, chạm để mở danh sách bài.
+ * Bộ thẻ được lặp lại vài lần; vị trí x luôn quấn trong một vòng nên nhìn liền mạch. Ít thẻ không đủ phủ màn hình thì đứng yên ở giữa.
+ */
+function ArtistRoll({ artists }: { artists: Artist[] }) {
+  const box = useRef<HTMLDivElement>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const [loop, setLoop] = useState(0); // bề rộng một bộ thẻ (px); 0 = đứng yên
+  const st = useRef({
+    speed: 0,
+    fling: 0, // vận tốc quán tính (px/giây), tắt dần
+    slow: false,
+    visible: true,
+    moved: false,
+    drag: null as null | { x0: number; v0: number; lastX: number; lastT: number },
   });
-  // Số thẻ mỗi bên đủ phủ kín bề ngang màn hình; luôn nhỏ hơn nửa vòng để thẻ đang quay vòng (nhảy từ mép này sang mép kia) vẫn ẩn
-  const reach = Math.max(1, Math.min(Math.ceil(innerWidth / 2 / CARD_GAP), Math.ceil(count / 2) - 1));
+  const copies = loop ? Math.max(2, Math.ceil((box.current?.clientWidth ?? innerWidth) / loop) + 1) : 1;
+  const wrap = (v: number) => ((v % loop) - loop) % loop; // giữ x trong khoảng (-loop, 0]
 
-  const stepRoll = (dir: number) => {
-    if (count === 0) return;
-    onChangeIndex((i) => (i + dir + count) % count);
-  };
+  // đo bề rộng một bộ thẻ; chưa đủ phủ khung thì không cuộn
+  useLayoutEffect(() => {
+    const measure = () => {
+      const cards = track.current!.children;
+      const first = cards[0] as HTMLElement;
+      const last = cards[artists.length - 1] as HTMLElement;
+      const gap = parseFloat(getComputedStyle(track.current!).columnGap) || 0;
+      const w = last.offsetLeft + last.offsetWidth + gap - first.offsetLeft;
+      setLoop(w > box.current!.clientWidth ? w : 0);
+    };
+    measure();
+    x.set(0);
+    const ro = new ResizeObserver(measure);
+    ro.observe(box.current!);
+    const io = new IntersectionObserver(([e]) => (st.current.visible = e.isIntersecting));
+    io.observe(box.current!);
+    return () => {
+      ro.disconnect();
+      io.disconnect();
+    };
+  }, [artists, x]);
 
-  const onDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    if (info.offset.x < -36 || info.velocity.x < -240) {
-      stepRoll(1);
-    } else if (info.offset.x > 36 || info.velocity.x > 240) {
-      stepRoll(-1);
+  useAnimationFrame((_, dt) => {
+    const s = st.current;
+    const { now, mini } = useStore.getState();
+    // không cuộn khi đang kéo, khi nằm ngoài màn hình, hoặc khi trình phát lớn đang che trang
+    if (!loop || s.drag || !s.visible || (now && !mini)) return;
+    const target = calm ? 0 : s.slow ? 6 : 36; // px mỗi giây
+    s.speed += (target - s.speed) * Math.min(1, dt / 400);
+    s.fling = Math.abs(s.fling) < 1 ? 0 : s.fling * Math.exp(-dt / 325); // tắt dần như cuộn trên điện thoại
+    x.set(wrap(x.get() + ((s.fling - s.speed) * dt) / 1000));
+  });
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    const s = st.current;
+    const d = s.drag;
+    if (!d) return;
+    if (!s.moved && Math.abs(e.clientX - d.x0) > 6) {
+      s.moved = true;
+      box.current!.setPointerCapture(e.pointerId);
     }
+    if (!s.moved) return;
+    const dt = e.timeStamp - d.lastT;
+    if (dt > 0) s.fling = 0.8 * (((e.clientX - d.lastX) / dt) * 1000) + 0.2 * s.fling;
+    d.lastX = e.clientX;
+    d.lastT = e.timeStamp;
+    x.set(wrap(d.v0 + e.clientX - d.x0));
+  };
+  const endDrag = (e: React.PointerEvent) => {
+    const d = st.current.drag;
+    if (d && e.timeStamp - d.lastT > 80) st.current.fling = 0; // giữ tay đứng yên rồi mới thả thì không trôi
+    st.current.drag = null;
   };
 
   return (
-    <div className="roll-container">
-      <motion.div
-        ref={stageRef}
-        className="roll-stage"
-        drag="x"
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.2}
-        onDragEnd={onDragEnd}
-        tabIndex={0}
-        aria-label="Dải cuộn nghệ sĩ vô tận, vuốt hoặc dùng phím mũi tên"
-        onKeyDown={(e) => {
-          if (e.key === 'ArrowRight') stepRoll(1);
-          else if (e.key === 'ArrowLeft') stepRoll(-1);
-        }}
-      >
-        {artists.map((a, idx) => {
-          // Tính khoảng cách vòng tròn (circular wrapped diff) để lặp vô tận
-          const diff = diffOf(idx);
-
-          const isCenter = diff === 0;
-          const isFar = Math.abs(diff) > reach;
-          // thẻ quay vòng (diff nhảy hơn 1 bậc) thì đặt thẳng vào chỗ mới, không cho bay ngang qua giữa màn hình
-          const wrapped = Math.abs(diff - (lastDiff.current.get(a.id) ?? diff)) > 1;
-
-          return (
-            <motion.div
-              key={a.id}
+    <div
+      ref={box}
+      className="roll"
+      data-static={!loop}
+      aria-label="Nghệ sĩ: kéo ngang để lướt, phím mũi tên để trôi nhanh"
+      onPointerDown={(e) => {
+        if (!loop) return;
+        st.current.moved = false;
+        st.current.fling = 0;
+        st.current.drag = { x0: e.clientX, v0: x.get(), lastX: e.clientX, lastT: e.timeStamp };
+      }}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onPointerEnter={(e) => e.pointerType === 'mouse' && (st.current.slow = true)}
+      onPointerLeave={(e) => e.pointerType === 'mouse' && (st.current.slow = false)}
+      onFocus={() => (st.current.slow = true)}
+      onBlur={() => (st.current.slow = false)}
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowRight') st.current.fling -= 900; // ~ một thẻ
+        else if (e.key === 'ArrowLeft') st.current.fling += 900;
+      }}
+    >
+      <motion.div ref={track} className="roll-track" style={{ x }}>
+        {Array.from({ length: copies }, (_, copy) =>
+          artists.map((a) => (
+            <button
+              key={`${copy}-${a.id}`}
               className="roll-card"
-              data-active={isCenter}
-              initial={false}
-              animate={{
-                x: diff * CARD_GAP,
-                scale: Math.max(0.66, 1 - Math.abs(diff) * 0.13),
-                rotateY: diff * -16,
-                z: -Math.abs(diff) * 70,
-                opacity: isFar ? 0 : Math.max(0.35, 1 - Math.abs(diff) * 0.22),
-              }}
-              transition={wrapped ? { duration: 0 } : { type: 'spring', stiffness: 340, damping: 28 }}
-              style={{
-                zIndex: 30 - Math.abs(diff),
-                pointerEvents: Math.abs(diff) > 2 ? 'none' : 'auto',
-              }}
-              onClick={() => {
-                if (isCenter) {
-                  set({ sheet: a });
-                } else {
-                  onChangeIndex((i) => (i + diff + count) % count);
-                }
-              }}
+              // bản lặp chỉ để nhìn liền mạch: không cho đọc màn hình và phím Tab đi vào
+              aria-hidden={copy > 0 || undefined}
+              tabIndex={copy > 0 ? -1 : undefined}
+              // e.detail === 0: kích hoạt bằng bàn phím, không phải cú thả tay sau khi kéo
+              onClick={(e) => (e.detail === 0 || !st.current.moved) && set({ sheet: a })}
             >
               <div className="card-thumb" data-initial={a.name[0]}>
-                {/* không lazy: thẻ nằm ngoài màn hình rồi mới trượt vào, lazy làm ảnh trống lúc đang lướt */}
+                {/* không lazy: thẻ trôi từ ngoài màn hình vào, lazy làm ảnh trống lúc đang lướt */}
                 <img
                   src={artistSrc(a, 480)}
-                  alt={a.name}
+                  alt={copy === 0 ? a.name : ''}
                   draggable={false}
                   decoding="async"
                   referrerPolicy="no-referrer"
@@ -351,21 +360,14 @@ function FramerRoll({
               </div>
               <div className="card-meta">
                 <strong>{a.name}</strong>
-                <small>{GENRE[a.genre] ?? a.genre} · {a.tracks.length} bài</small>
+                <small>
+                  {GENRE[a.genre] ?? a.genre} · {a.tracks.length} bài
+                </small>
               </div>
-            </motion.div>
-          );
-        })}
+            </button>
+          )),
+        )}
       </motion.div>
-
-      <div className="flow-nav">
-        <button aria-label="Nghệ sĩ trước" onClick={() => stepRoll(-1)}>
-          <IconArrowLeft size={20} />
-        </button>
-        <button aria-label="Nghệ sĩ kế tiếp" onClick={() => stepRoll(1)}>
-          <IconArrowRight size={20} />
-        </button>
-      </div>
     </div>
   );
 }

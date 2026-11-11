@@ -128,10 +128,14 @@ for (const a of configs) {
   if (process.env.SPOTIFY_CLIENT_ID && !portrait) report.push(`[${a.name}] Spotify không có tên khớp "${query}", dùng ảnh video`);
 
   // oEmbed: 404 = video đã mất, 401 = không cho nhúng. Không cần khóa.
+  // Tên video phải chứa tên bài: bắt lỗi gán nhầm sang bài khác (từng xảy ra với 6 bài trùng độ dài).
   await Promise.all(
     a.tracks.map(async (t) => {
-      const { status } = await fetch(`https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${t.youtube}`);
-      if (status !== 200) report.push(`[${a.name}] "${t.title}": YouTube trả ${status}, video có thể đã mất hoặc cấm nhúng`);
+      const res = await fetch(`https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${t.youtube}`);
+      if (res.status !== 200) return report.push(`[${a.name}] "${t.title}": YouTube trả ${res.status}, video có thể đã mất hoặc cấm nhúng`);
+      const { title } = await res.json();
+      if (!norm(title).includes(norm(t.title.replace(/\(.*?\)/g, ''))))
+        report.push(`[${a.name}] "${t.title}": tên video "${title}" không chứa tên bài, có thể gán nhầm bài khác`);
     }),
   );
 

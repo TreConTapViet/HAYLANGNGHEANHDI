@@ -144,13 +144,31 @@ Theo yêu cầu: bỏ video/MV làm phần chính, thay bằng lời bài hát; 
 | Gọn code | Bảng nghệ sĩ và cột danh sách dùng chung một danh sách bài (`TrackList`); nút trong trình phát dùng chung `Btn` | `src/Overlays.tsx` |
 | Kiểm thử | `npm test`: 4 bài kiểm tra phần tính giờ lời | `scripts/lyrics.test.mjs` |
 
-**Vấn đề dữ liệu phát hiện khi kiểm tra (chưa sửa, chờ quyết định):** ở lần chuyển sang video lyric trước đó, **70/103 bài** đã bị đổi sang video do người khác tải lại, không phải kênh chính thức. Nhiều bản bị cắt hoặc đổi tốc độ (ví dụ "Ngủ Một Mình" dài 2:28 trong khi bản thu dài khoảng 3:00; "Bùa Yêu" là bản dài 19 phút) nên **56 bài lệch lời hơn 3 giây**. Khi video lệch bản thu hơn 3 giây, trình phát hiện cảnh báo và người nghe có thể chạm vào dòng để chỉnh. Mỗi bài cũng có thể chỉnh tay bằng trường `lyricsOffset` (xem [content/artists/README.md](../content/artists/README.md)).
+**Sửa nguồn video (sai nốt, sai nhịp):** ở lần chuyển sang video lyric trước đó, **70/103 bài** đã bị đổi sang video do người khác tải lại. Để né hệ thống bản quyền của YouTube, các bản này thường bị đổi tông hoặc tốc độ, nên nghe sai nốt, sai nhịp và lời bị lệch. Ví dụ "Thằng Điên" dài gần bằng bản gốc nhưng vẫn sai tông; "Bùa Yêu" là một bản dài 19 phút. Đã sửa lại toàn bộ:
+1. Tra cứu từng bài, ưu tiên video trên kênh chính thức có độ dài khớp một phiên bản lời (±3 giây).
+2. Không có thì dùng kênh **"<nghệ sĩ> - Topic"**, kênh YouTube tự tạo từ bản phát hành của hãng đĩa, nên tiếng đúng bản thu gốc.
+3. Không có nữa thì quay về ID chính thức trước đó.
+4. Loại mọi bản remix, karaoke, live, beat, cover, 360°. "Simple Love" từng bị chọn nhầm bản karaoke, "Lạc Trôi" nhầm bản remix.
+5. Mỗi ID mới đều được kiểm lại kênh đăng (`videoDetails.channelId`) trước khi ghi.
+6. Kiểm tên video của cả 103 bài: tìm ra **6 bài bị gán nhầm sang bài khác trùng độ dài** (3 bài của Đen Vâu, "Đi Tìm Tình Yêu", "When You Look at Me", "Bước Qua Nhau") và đã đưa về MV chính thức của đúng bài đó. Từ nay `npm run data` tự so tên video (qua oEmbed) với tên bài và báo nếu không khớp.
+
+Kết quả: **103/103 bài** dùng video kênh chính thức hoặc kênh Topic của nghệ sĩ. Mỗi bài có thêm trường `seconds` (độ dài video) để script chọn đúng phiên bản lời. Bài nào video vẫn lệch bản lời hơn 3 giây thì trình phát báo một lần, và có thể chỉnh tay bằng `lyricsOffset` (xem [content/artists/README.md](../content/artists/README.md)).
+
+**Dải chọn nghệ sĩ (theo yêu cầu):** bỏ hai nút ← →; thay kiểu xoay 3D bằng **dải cuộn tự trôi vô tận** (Motion `useAnimationFrame` + `useMotionValue`). Rê chuột thì chậm lại; kéo thì cuộn theo tay, thả ra còn trôi theo quán tính; phím ← → đẩy trôi nhanh khoảng một thẻ; chạm để mở danh sách bài. Lọc còn ít nghệ sĩ, không đủ phủ bề ngang, thì đứng yên ở giữa. Dải tạm dừng khi nằm ngoài màn hình hoặc khi trình phát lớn đang mở. Ở chế độ "giảm chuyển động" thì không tự trôi.
+
+**Kính lỏng (phong cách Liquid Glass của Apple), theo yêu cầu:** cột danh sách bên trái và thẻ thu gọn dùng chung một kiểu kính:
+- Làm mờ và tăng bão hòa nền phía sau.
+- Viền sáng phía trên, điểm sáng góc và một vệt bóng chạy chéo.
+- Nhuộm theo **màu chủ đạo của bài**, cùng màu quầng sáng của lời. Màu này lấy từ ảnh bìa, đặt ở cấp trình phát.
+- Bài đang phát trong danh sách là một viên kính sáng hơn.
+- Lớp bóng sáng nằm dưới khung YouTube, không phủ lên video.
+
+Chưa có hiệu ứng khúc xạ ở mép kính như của Apple (cần bộ lọc SVG, chỉ chạy trên Chrome và tốn máy).
 
 Đã kiểm bằng Edge không giao diện (1440×900 và 390×844): bảng nghệ sĩ trượt sang thành cột danh sách bên trái, chữ quét sáng theo giờ phát, chạm dòng thì tua tới, ngăn kéo trên điện thoại đóng sau khi chọn bài, thẻ nhỏ giữ khung video 288×200, 16/16 ảnh nghệ sĩ tải xong, console không lỗi. **Chưa thử trên điện thoại thật**, chưa đo FPS của hiệu ứng nhòe chữ trên máy yếu.
 
 ## Những điều còn chờ
 
-- Quyết định nguồn video cho 70 bài đang dùng video không chính thức (xem mục trên).
 - Chốt danh sách nghệ sĩ và bài cuối cùng.
 - Có video nào đó cấm nhúng hay không thì chỉ biết khi chạy thật; vì vậy mới có phương án lùi về bản nghe thử.
 - Đọc lại điều khoản các nền tảng một lần nữa trước ngày công khai.

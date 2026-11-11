@@ -7,23 +7,29 @@ youtubeChannel: UCi_RaMQ4Hhdml1Cff4SCpQA
 spotifyQuery: MONO
 tracks:
   - title: Waiting For You
-    youtube: tEh9uzXtalQ
-    kind: lyric
+    youtube: CHw1b_1LVBA
+    kind: mv
+    seconds: 265
   - title: Chăm Hoa
-    youtube: eHy_1q5kvRo
-    kind: lyric
+    youtube: WCm2elbTEZQ
+    kind: mv
+    seconds: 260
   - title: Em Xinh
     youtube: KiAC_kdfoP4
     kind: lyric
+    seconds: 186
   - title: Đi Tìm Tình Yêu
-    youtube: hP2lR8zBzNs
-    kind: lyric
+    youtube: GOSiWQlZdVU
+    kind: mv
+    seconds: 239
   - title: Em Là
-    youtube: KbnstXfujT4
-    kind: lyric
+    youtube: bpOwZ68fcQE
+    kind: mv
+    seconds: 200
   - title: Ôm Em Thật Lâu
-    youtube: FISVy3lwJq4
-    kind: lyric
+    youtube: vCcbJGNMR60
+    kind: mv
+    seconds: 341
 image: >-
   https://yt3.googleusercontent.com/1bXk6QLUyY-recyX5KOQkfNN_BTKiKB9j30qEC0xCI3-R7_67Sn5iX_-xj6Q8QrJUVHpCn09tA=s900-c-k-c0x00ffffff-no-rj
 ---

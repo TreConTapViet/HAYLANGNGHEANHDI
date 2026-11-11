@@ -7,29 +7,36 @@ youtubeChannel: UC2OzDIKOESoKIdR1VtwCAAQ
 spotifyQuery: Đạt G
 tracks:
   - title: Thêm Bao Nhiêu Lâu
-    youtube: UU7NyoZwY9c
-    kind: lyric
+    youtube: sinhZ1l54K8
+    kind: mv
+    seconds: 312
   - title: Bánh Mì Không
     feat: Du Uyên
-    youtube: Us_FHAnxZ28
-    kind: lyric
+    youtube: Ztrj8UIDMQY
+    kind: mv
+    seconds: 272
   - title: Buồn Không Em
-    youtube: DwBgmWUF5Q4
-    kind: lyric
+    youtube: NoaeZiR6j_o
+    kind: audio
+    seconds: 384
   - title: Đô Trưởng
-    youtube: iztRHp1LCfk
-    kind: lyric
+    youtube: ljN7Pv3cnIo
+    kind: mv
+    seconds: 297
   - title: 'EmmE (Em, Tôi)'
     feat: Du Uyên
-    youtube: 2rfDNOQEMhI
-    kind: lyric
+    youtube: A_GjXILBkp0
+    kind: mv
+    seconds: 247
   - title: Khó Vẽ Nụ Cười
     feat: Du Uyên
-    youtube: LxWcmjIlg5U
-    kind: lyric
+    youtube: z3qOnZIqRVs
+    kind: audio
+    seconds: 334
   - title: Ngồi Nghe Em Khóc
-    youtube: R3PtvIOhiQU
-    kind: lyric
+    youtube: xJ1uMrL9Rwo
+    kind: mv
+    seconds: 287
 image: >-
   https://yt3.googleusercontent.com/zc0PIJu-tDrBSfNAbzrFMNfd4LT8-orYkj6GYfa2NJJReXEJu0K9gpanhgKFzCVCOJ-dQMn6=s900-c-k-c0x00ffffff-no-rj
 ---

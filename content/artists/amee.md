@@ -8,26 +8,32 @@ spotifyQuery: AMEE
 tracks:
   - title: Anh Nhà Ở Đâu Thế
     feat: B Ray
-    youtube: J32e-pWhtWg
-    kind: lyric
+    youtube: iE52-XXnQqs
+    kind: mv
+    seconds: 255
   - title: Trời Giấu Trời Mang Đi
     feat: Viruss
-    youtube: PBLTujbAV1s
-    kind: lyric
+    youtube: YXkp77tR9vw
+    kind: mv
+    seconds: 523
   - title: Sao Anh Chưa Về Nhà
     feat: Ricky Star
-    youtube: d8U1ZDjHTqo
-    kind: lyric
+    youtube: RlBkvjVss-s
+    kind: mv
+    seconds: 276
   - title: Yêu Thì Yêu Không Yêu Thì Yêu
-    youtube: vZdriwoLx3E
-    kind: lyric
+    youtube: 66GBxJYrmVM
+    kind: mv
+    seconds: 259
   - title: Đen Đá Không Đường
-    youtube: tTLYWRxEyKw
-    kind: lyric
+    youtube: ZwDxaM5VBJM
+    kind: mv
+    seconds: 202
   - title: Mộng Yu
     feat: MCK
-    youtube: rzLaqAhEq-8
-    kind: lyric
+    youtube: jEKTZQHuI1Y
+    kind: mv
+    seconds: 202
 image: 'https://i.scdn.co/image/ab6761610000e5ebfd70279a04a9b3796e7dcd4d'
 ---
 

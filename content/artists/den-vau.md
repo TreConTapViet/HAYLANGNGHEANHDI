@@ -8,28 +8,34 @@ spotifyQuery: Đen
 tracks:
   - title: Lối Nhỏ
     feat: Phương Anh Đào
-    youtube: aUk-xzMynbE
-    kind: lyric
+    youtube: KKc_RMln5UY
+    kind: mv
+    seconds: 297
   - title: Bài Này Chill Phết
     feat: MIN
-    youtube: 5yZmN-HM1Lk
-    kind: lyric
+    youtube: ddaEtFOsFeM
+    kind: mv
+    seconds: 273
   - title: Đi Về Nhà
     feat: JustaTee
-    youtube: j6EQP5WWeSo
-    kind: lyric
+    youtube: vTJdVE_gjI0
+    kind: mv
+    seconds: 206
   - title: Mang Tiền Về Cho Mẹ
     feat: Nguyên Thảo
-    youtube: RM5FpyI1l78
-    kind: lyric
+    youtube: UVbv-PJXm14
+    kind: mv
+    seconds: 402
   - title: Trốn Tìm
     feat: MTV band
-    youtube: F9QGP0jw6_E
-    kind: lyric
+    youtube: Ws-QlpSltr8
+    kind: mv
+    seconds: 252
   - title: Nấu Ăn Cho Em
     feat: PiaLinh
-    youtube: YNlMU41NXlc
-    kind: lyric
+    youtube: ukHK1GVyr0I
+    kind: mv
+    seconds: 257
 image: >-
   https://yt3.googleusercontent.com/EcTaxKaey8AYB8XH6FJlZHFxnScP35VpyuvlybH_feh9CZesfW6Lx9x6_gCzpwqdmQjI6Ok4Kg=s900-c-k-c0x00ffffff-no-rj
 ---

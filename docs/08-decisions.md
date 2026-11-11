@@ -69,6 +69,13 @@ Mỗi mục trả lời bốn câu: *Chuyện gì khiến phải chọn? Chọn 
   - **Bản quyền:** lời bài hát là tác phẩm có bản quyền, LRCLIB do cộng đồng đóng góp, không có giấy phép. Dùng cá nhân thì ổn; công khai thì phải cân nhắc (bỏ lời, hoặc dùng nhà cung cấp có giấy phép như Musixmatch hay LyricFind, đều tốn phí).
 - **Nghĩ lại khi:** có nguồn lời có giờ từng chữ (định dạng LRC mở rộng), hoặc trước khi công khai trang.
 
+## ADR-010 · Chỉ dùng video của kênh chính thức hoặc kênh Topic của nghệ sĩ
+
+- **Chuyện gì:** người dùng nghe thấy một số bài sai nốt, sai nhịp (ví dụ "Thằng Điên"). Kiểm tra cho thấy 70/103 bài đang dùng video do người khác tải lại. Các bản này thường bị đổi tông hoặc tốc độ để né hệ thống bản quyền, mà độ dài vẫn có thể gần bằng bản gốc, nên **không thể chỉ dựa vào độ dài để phát hiện**.
+- **Chọn:** chỉ nhận video có kênh đăng (`videoDetails.channelId`) là kênh chính thức trong file `.md`, hoặc kênh "<nghệ sĩ> - Topic" do YouTube tự tạo từ bản phát hành của hãng đĩa. Loại các bản remix, karaoke, live, beat, cover, 360°. Trong các bản đạt, ưu tiên bản có độ dài khớp một phiên bản lời.
+- **Đổi lại:** MV chính thức hay có đoạn mở đầu hoặc kết thúc riêng, làm lời lệch vài giây ở một số bài. Kênh Topic thì đúng bản thu nhưng hình chỉ là ảnh bìa (không sao, vì video giờ chỉ là ô nhỏ).
+- **Nghĩ lại khi:** không bao giờ quay lại dùng video tải lại.
+
 ## ADR-009 · Biểu tượng chép nguyên từ Lucide
 
 - **Chọn:** chép nguyên mã SVG của 18 biểu tượng từ `lucide-static@1.72.0` vào `src/Icons.tsx` (giấy phép ISC, chỉ cần giữ ghi chú nguồn). Không thêm thư viện vào dự án.
