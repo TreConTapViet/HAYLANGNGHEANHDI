@@ -57,7 +57,8 @@ Trạng thái hiện tại: **chưa có dòng code nào trong repo, chỉ có t�
 | iTunes Search trả tên bài, album, bìa 600×600, bản nghe thử, không cần khóa | Đã gọi thật, có kết quả |
 | Tìm YouTube trả ID + kênh + thời lượng, lọc được theo kênh chính thức | Đã gọi thật cho 8 nghệ sĩ |
 | Khung YouTube phải ≥ 200×200px và không bị che | Đã đọc điều khoản "Required Minimum Functionality" |
-| 46 bài của 8 nghệ sĩ đã có ID video chính thức trong [content/artists/](../content/artists/) | Đối chiếu tên kênh trong kết quả tìm kiếm |
+| 50 bài của 8 nghệ sĩ đã có ID video chính thức trong [content/artists/](../content/artists/) | Đối chiếu tên kênh trong kết quả tìm kiếm |
+| Cả 50 video **tồn tại** và tên kênh khớp kênh chính thức (oEmbed trả HTTP 200 cho 50/50) | Gọi thật ngày 11/11/2026; tên tác giả: HIEUTHUHAI, DatG Music, Sơn Tùng M-TP Official, Đen Vâu Official, Mono Official, tlinh, Wren Evans Official, ST.319 Entertainment |
 
 ### Chưa kiểm chứng (mỗi mục là một "thử nghiệm nhỏ" phải qua trước khi dựng giao diện)
 
@@ -65,7 +66,7 @@ Trạng thái hiện tại: **chưa có dòng code nào trong repo, chỉ có t�
 |---|---|---|---|
 | T1 | Trên iPhone và Android thật, trình phát YouTube nhúng có **tiếp tục phát khi khóa màn hình** không? | Trang thử tối thiểu: một iframe + nút phát | Ghi rõ giới hạn; cân nhắc bản nghe thử cho nghe nền |
 | T2 | Hết bài thì **tự chuyển bài kế** có chạy trên di động không? | Cùng trang thử, nạp bài thứ hai sau sự kiện hết bài | Hiện nút "Chạm để phát bài kế" |
-| T3 | Có bài nào trong 46 bài **cấm nhúng** không? (oEmbed 401 = cấm, 404 = mất) | Gọi oEmbed cho từng ID | Đổi video khác hoặc để "chỉ nghe thử" |
+| T3 | Có bài nào trong 50 bài **cấm nhúng** không? | oEmbed cho từng ID: **đã chạy, 50/50 trả 200** (không có 401/404). Nhưng mình chưa có ví dụ video cấm nhúng để đối chứng rằng "cấm nhúng = 401", nên kết luận *tạm tin*, xác nhận thật bằng trang thử bên dưới | Đổi video khác hoặc để "chỉ nghe thử" |
 | T4 | Đĩa quay + trình phát YouTube có giữ được **60fps** trên điện thoại tầm trung? | DevTools + máy thật | Đơn giản hóa hiệu ứng, bớt lớp parallax |
 | T5 | Điều khoản **tải ảnh về và phục vụ lại** của Apple, Spotify, YouTube | Đọc điều khoản | Dùng link ảnh gốc (xem ADR-004) |
 | T6 | Spotify trả ảnh chân dung **khớp tên** cho cả 8 nghệ sĩ không (đặc biệt "Đen", "MONO", "tlinh") | Chạy một lượt tìm với khóa của bạn | Dùng ảnh video chính thức cho người không khớp |
@@ -74,7 +75,9 @@ Trạng thái hiện tại: **chưa có dòng code nào trong repo, chỉ có t�
 
 | # | Ngày | Kết quả |
 |---|---|---|
-| T1–T6 | | chưa làm |
+| T3 | 11/11/2026 | 50/50 oEmbed = 200 (tạm tin: không có video cấm nhúng; chưa đối chứng) |
+| T1, T2, T4 | | Trang thử đã dựng (nằm ngoài repo); **chờ bạn thử trên máy thật** |
+| T5, T6 | | chưa làm |
 
 ## Những điều còn chờ
 
