@@ -128,7 +128,7 @@ function Sheet() {
                         {t.title}
                         <small>{[t.feat && `ft. ${t.feat}`, t.album].filter(Boolean).join(' · ') || artist.name}</small>
                       </span>
-                      {current ? <i className="wave" data-on={playing}><b /><b /><b /><b /></i> : <small>{t.kind.toUpperCase()}</small>}
+                      {current ? <i className="wave" data-on={playing}><b /><b /><b /><b /></i> : <small className="lyric-badge">LYRIC</small>}
                     </button>
                   </li>
                 );
@@ -280,7 +280,7 @@ function Player() {
         if (mini) setMini(false);
       }}
     >
-      <img className="backdrop" src={cover(track, 100)} alt="" />
+      <img className="backdrop" src={artist.image} alt={artist.name} />
       <button
         className="size"
         aria-label={mini ? 'Mở rộng trình phát' : 'Thu gọn trình phát'}
@@ -481,7 +481,7 @@ function Player() {
                         {t.title}
                         <small>{[t.feat && `ft. ${t.feat}`, t.album].filter(Boolean).join(' · ') || artist.name}</small>
                       </span>
-                      {current ? <i className="wave" data-on={playing}><b /><b /><b /><b /></i> : <small>{t.kind.toUpperCase()}</small>}
+                      {current ? <i className="wave" data-on={playing}><b /><b /><b /><b /></i> : <small className="lyric-badge">LYRIC</small>}
                     </button>
                   </li>
                 );

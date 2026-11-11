@@ -161,7 +161,7 @@ export async function play(artist: Artist, track: Track) {
     width: '100%',
     height: '100%',
     videoId: track.id,
-    playerVars: { playsinline: 1, rel: 0, autoplay: 1 },
+    playerVars: { playsinline: 1, rel: 0, autoplay: 1, cc_load_policy: 1 },
     events: {
       onReady: () => {
         const cur = get().now?.track;

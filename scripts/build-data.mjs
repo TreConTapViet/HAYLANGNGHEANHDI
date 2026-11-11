@@ -119,7 +119,7 @@ for (const a of configs) {
       id: t.youtube,
       title: t.title,
       feat: t.feat ?? null,
-      kind: t.kind ?? 'mv',
+      kind: t.kind ?? 'lyric',
       album: hit?.collectionName ?? null,
       art: hit?.artworkUrl100 ?? null,
       preview: hit?.previewUrl ?? null,
@@ -129,7 +129,7 @@ for (const a of configs) {
     id: a.id,
     name: a.name,
     genre: a.genre,
-    image: portrait?.image ?? (await ytThumb(a.tracks.map((t) => t.youtube))),
+    image: a.image ?? portrait?.image ?? (await ytThumb(a.tracks.map((t) => t.youtube))),
     tracks,
   });
   await sleep(3200);

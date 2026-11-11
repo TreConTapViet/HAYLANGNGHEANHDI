@@ -6,27 +6,29 @@ genre: pop
 youtubeChannel: UCVfTp0vAXnuDL8SSI8tPYGA
 spotifyQuery: Phương Ly
 tracks:
-  - title: "Mặt Trời Của Em"
-    feat: "JustaTee"
-    youtube: t0WFOnwp3MM
-    kind: mv
-  - title: "Anh Là Ngoại Lệ Của Em"
-    youtube: q2YUtZum9wc
-    kind: mv
-  - title: "Missing You"
-    feat: "TINLE"
-    youtube: PR_yVho1Txc
-    kind: mv
-  - title: "Anh Là Ai"
-    youtube: 3bJkVSMs4dw
-    kind: mv
-  - title: "Thichthich"
-    youtube: OqdA6DKV1Fs
-    kind: mv
-  - title: "Túi 3 Gang"
-    feat: "Rhymastic"
+  - title: Mặt Trời Của Em
+    feat: JustaTee
+    youtube: o_VDMgNbs_I
+    kind: lyric
+  - title: Anh Là Ngoại Lệ Của Em
+    youtube: OLPTtUjHE64
+    kind: lyric
+  - title: Missing You
+    feat: TINLE
+    youtube: 77RoT5zeu8o
+    kind: lyric
+  - title: Anh Là Ai
+    youtube: Xjvb_AkyE5w
+    kind: lyric
+  - title: Thichthich
+    youtube: mHLuntxDdho
+    kind: lyric
+  - title: Túi 3 Gang
+    feat: Rhymastic
     youtube: 6jEw-WCjMCk
-    kind: mv
+    kind: lyric
+image: >-
+  https://yt3.googleusercontent.com/AYVoajn6lJ8UFWn-gLI4SvcmafxYPm8Jt9K5u6vo5fyWGtG8WlhxCnhFWjVjn3qFUGZIfVY2wjo=s900-c-k-c0x00ffffff-no-rj
 ---
 
 Kênh chính thức: Phuong Ly Official (`UCVfTp0vAXnuDL8SSI8tPYGA`).

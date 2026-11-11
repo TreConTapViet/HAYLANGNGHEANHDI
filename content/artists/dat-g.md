@@ -6,30 +6,32 @@ genre: rap
 youtubeChannel: UC2OzDIKOESoKIdR1VtwCAAQ
 spotifyQuery: Đạt G
 tracks:
-  - title: "Thêm Bao Nhiêu Lâu"
-    youtube: sinhZ1l54K8
-    kind: mv
-  - title: "Bánh Mì Không"
-    feat: "Du Uyên"
-    youtube: Ztrj8UIDMQY
-    kind: mv
-  - title: "Buồn Không Em"
-    youtube: NtKX__-qPSI
-    kind: mv
-  - title: "Đô Trưởng"
-    youtube: ljN7Pv3cnIo
-    kind: mv
-  - title: "EmmE (Em, Tôi)"
-    feat: "Du Uyên"
-    youtube: A_GjXILBkp0
-    kind: mv
-  - title: "Khó Vẽ Nụ Cười"
-    feat: "Du Uyên"
-    youtube: z3qOnZIqRVs
-    kind: audio
-  - title: "Ngồi Nghe Em Khóc"
-    youtube: xJ1uMrL9Rwo
-    kind: video
+  - title: Thêm Bao Nhiêu Lâu
+    youtube: UU7NyoZwY9c
+    kind: lyric
+  - title: Bánh Mì Không
+    feat: Du Uyên
+    youtube: Us_FHAnxZ28
+    kind: lyric
+  - title: Buồn Không Em
+    youtube: DwBgmWUF5Q4
+    kind: lyric
+  - title: Đô Trưởng
+    youtube: iztRHp1LCfk
+    kind: lyric
+  - title: 'EmmE (Em, Tôi)'
+    feat: Du Uyên
+    youtube: 2rfDNOQEMhI
+    kind: lyric
+  - title: Khó Vẽ Nụ Cười
+    feat: Du Uyên
+    youtube: LxWcmjIlg5U
+    kind: lyric
+  - title: Ngồi Nghe Em Khóc
+    youtube: R3PtvIOhiQU
+    kind: lyric
+image: >-
+  https://yt3.googleusercontent.com/zc0PIJu-tDrBSfNAbzrFMNfd4LT8-orYkj6GYfa2NJJReXEJu0K9gpanhgKFzCVCOJ-dQMn6=s900-c-k-c0x00ffffff-no-rj
 ---
 
 Kênh chính thức: DatG Music (`UC2OzDIKOESoKIdR1VtwCAAQ`).

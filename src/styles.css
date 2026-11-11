@@ -202,7 +202,7 @@ small { color: var(--mute); font-size: 0.8rem; }
 .flow ul { position: relative; display: flex; list-style: none; margin: 0; padding: 6vh calc(50% - var(--w) * 0.36) 0; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
 .flow li { flex: none; width: calc(var(--w) * 0.72); scroll-snap-align: center; padding-bottom: calc(var(--w) * 0.45); }
 .flow li button { width: var(--w); margin-left: calc(var(--w) * -0.14); display: grid; gap: 0.2rem; }
-.flow li img { width: 100%; aspect-ratio: 1; object-fit: cover; margin-bottom: 0.9rem; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06); -webkit-box-reflect: below 2px linear-gradient(transparent 58%, rgba(0, 0, 0, 0.4)); }
+.flow li img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 20px; margin-bottom: 0.9rem; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); -webkit-box-reflect: below 2px linear-gradient(transparent 58%, rgba(0, 0, 0, 0.4)); }
 .flow li strong { font-size: 1.2rem; font-weight: 600; position: relative; }
 .flow li small { position: relative; }
 /* Xoay theo vị trí cuộn */
@@ -245,7 +245,18 @@ kbd { padding: 0.15rem 0.4rem; border-radius: 4px; background: rgba(255, 255, 25
 
 /* ---------- trình phát ---------- */
 .player { position: fixed; z-index: 20; inset: 0; overflow: hidden; background: var(--bg); display: grid; align-content: center; justify-items: center; gap: clamp(1rem, 2.5vh, 2rem); padding: 3.5rem 1.25rem 1.5rem; view-transition-name: player; }
-.backdrop { position: absolute; inset: -10%; width: 120%; height: 120%; object-fit: cover; filter: blur(60px) brightness(0.45) saturate(1.5); pointer-events: none; }
+.backdrop { position: absolute; inset: -10%; width: 120%; height: 120%; object-fit: cover; filter: blur(54px) brightness(0.4) saturate(1.4); pointer-events: none; transition: filter 0.8s, opacity 0.8s; }
+.lyric-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 0.12rem 0.45rem;
+  border-radius: 6px;
+  background: rgba(134, 162, 255, 0.15);
+  border: 1px solid rgba(134, 162, 255, 0.32);
+  color: #a4beff;
+}
 .player > :not(.backdrop) { position: relative; }
 .player > .size { position: absolute; top: 0.8rem; left: 0.8rem; font-size: 1.3rem; line-height: 1; }
 .vinyl { width: min(58vw, 30svh, 380px); aspect-ratio: 1; cursor: grab; touch-action: none; }
