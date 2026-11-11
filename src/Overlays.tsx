@@ -18,6 +18,22 @@ import {
   toggleShuffle,
   useStore,
 } from './player';
+import {
+  IconChevronDown,
+  IconChevronUp,
+  IconClose,
+  IconNext,
+  IconPause,
+  IconPlay,
+  IconPrev,
+  IconQueue,
+  IconRepeat,
+  IconRepeatOne,
+  IconShare,
+  IconShuffle,
+  IconVolume,
+  IconVolumeMute,
+} from './Icons';
 
 const set = useStore.setState;
 
@@ -97,19 +113,21 @@ function Sheet() {
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             drag="y"
-            dragListener={false} // chỉ kéo ở phần đầu, để danh sách vẫn cuộn được
+            dragListener={false}
             dragControls={drag}
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0, bottom: 1 }}
             onDragEnd={(_, i) => (i.offset.y > 120 || i.velocity.y > 500) && close()}
           >
             <header onPointerDown={(e) => drag.start(e)}>
-              <img src={artist.image} alt="" />
+              <img src={artist.image} alt={artist.name} />
               <div>
                 <h2>{artist.name}</h2>
                 <small>{artist.tracks.length} bài · kéo xuống để đóng</small>
               </div>
-              <button autoFocus aria-label="Đóng" onPointerDown={(e) => e.stopPropagation()} onClick={close}>✕</button>
+              <button autoFocus aria-label="Đóng" onPointerDown={(e) => e.stopPropagation()} onClick={close}>
+                <IconClose size={20} />
+              </button>
             </header>
             <ol>
               {artist.tracks.map((t) => {
@@ -268,8 +286,6 @@ function Player() {
     }
   };
 
-  const repeatIcon = repeat === 'one' ? '🔂' : repeat === 'off' ? '➡' : '🔁';
-
   return (
     <section
       className="player"
@@ -289,7 +305,7 @@ function Player() {
           setMini(!mini);
         }}
       >
-        {mini ? '⌃' : '⌄'}
+        {mini ? <IconChevronUp size={20} /> : <IconChevronDown size={20} />}
       </button>
 
       {/* Vuốt ngang trên đĩa: đổi bài. Vuốt xuống: thu gọn. */}
@@ -317,7 +333,7 @@ function Player() {
       </motion.div>
 
       <div className="panel" onClick={(e) => mini && e.stopPropagation()}>
-        {/* Khung YouTube: luôn nhìn thấy, ≥200×200, không phủ gì lên (điều khoản YouTube) */}
+        {/* Khung YouTube: hiển thị video lời bài hát (Lyric Video) */}
         <div className="frame" hidden={preview}>
           <div id="yt" />
         </div>
@@ -342,25 +358,26 @@ function Player() {
           {!mini && (
             <button
               className="extra"
-              aria-label="Phát ngẫu nhiên"
+              aria-label="Phát ngẫu nhiên toàn bộ nghệ sĩ"
               data-active={shuffle}
               onClick={(e) => {
                 e.stopPropagation();
                 toggleShuffle();
               }}
             >
-              🔀
+              <IconShuffle size={18} />
             </button>
           )}
 
           <button
+            className="step-btn"
             aria-label="Bài trước"
             onClick={(e) => {
               e.stopPropagation();
               step(-1);
             }}
           >
-            ⏮
+            <IconPrev size={22} />
           </button>
           <button
             className="main"
@@ -370,16 +387,17 @@ function Player() {
               toggle();
             }}
           >
-            {status === 'loading' ? '…' : playing ? '❚❚' : '▶'}
+            {status === 'loading' ? '…' : playing ? <IconPause size={24} /> : <IconPlay size={24} />}
           </button>
           <button
+            className="step-btn"
             aria-label="Bài kế"
             onClick={(e) => {
               e.stopPropagation();
               step(1);
             }}
           >
-            ⏭
+            <IconNext size={22} />
           </button>
 
           {!mini && (
@@ -393,25 +411,25 @@ function Player() {
                   cycleRepeat();
                 }}
               >
-                {repeatIcon}
+                {repeat === 'one' ? <IconRepeatOne size={18} /> : <IconRepeat size={18} />}
               </button>
               <button
                 className="extra"
-                aria-label="Danh sách phát của nghệ sĩ"
+                aria-label="Danh sách bài hát của nghệ sĩ"
                 data-active={queueOpen}
                 onClick={(e) => {
                   e.stopPropagation();
                   set({ queueOpen: !queueOpen });
                 }}
               >
-                ☰
+                <IconQueue size={18} />
               </button>
               <button
                 className="extra"
                 aria-label="Sao chép liên kết chia sẻ bài hát"
                 onClick={handleShare}
               >
-                🔗
+                <IconShare size={18} />
               </button>
               <div className="volume-wrap">
                 <button
@@ -422,7 +440,7 @@ function Player() {
                     toggleMute();
                   }}
                 >
-                  {muted || volume === 0 ? '🔇' : volume < 50 ? '🔉' : '🔊'}
+                  {muted || volume === 0 ? <IconVolumeMute size={18} /> : <IconVolume size={18} />}
                 </button>
                 <input
                   type="range"
@@ -439,13 +457,14 @@ function Player() {
           )}
 
           <button
+            className="close-btn"
             aria-label="Tắt nhạc"
             onClick={(e) => {
               e.stopPropagation();
               stop();
             }}
           >
-            ✕
+            <IconClose size={20} />
           </button>
         </div>
       </div>
@@ -465,7 +484,9 @@ function Player() {
                 <h3>Danh sách bài hát</h3>
                 <small>{artist.name} · {artist.tracks.length} bài</small>
               </div>
-              <button aria-label="Đóng danh sách" onClick={() => set({ queueOpen: false })}>✕</button>
+              <button aria-label="Đóng danh sách" onClick={() => set({ queueOpen: false })}>
+                <IconClose size={18} />
+              </button>
             </header>
             <ol>
               {artist.tracks.map((t) => {

@@ -1,7 +1,9 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'motion/react';
 import { calm, cover, play, useStore, type Artist, type Track } from './player';
+import { IconArrowLeft, IconArrowRight, IconClose, IconPlay, IconSearch } from './Icons';
 
-// Bảng bài hát + trình phát (kèm thư viện kéo/vuốt) tải sau, để trang mở đầu hiện nhanh hơn
+// Bảng bài hát + trình phát tải sau để trang mở đầu hiện nhanh hơn
 const Overlays = lazy(() => import('./Overlays'));
 
 const set = useStore.setState;
@@ -10,7 +12,6 @@ const HERO_VIDEO =
 const poster = (w: number) =>
   `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260908_122011_59c97465-4d23-4fdc-ac40-f6832f573e28.png&w=${w}&q=85`;
 
-// Video nền nặng gần 20MB: chỉ tải trên màn hình rộng, điện thoại dùng ảnh tĩnh có chuyển động nhẹ bằng CSS
 const showVideo = !calm && matchMedia('(min-width: 900px)').matches;
 const GENRE: Record<string, string> = { all: 'Tất cả', rap: 'Rap', pop: 'Pop', indie: 'Indie', ballad: 'Ballad' };
 
@@ -70,8 +71,8 @@ export default function App() {
       </main>
       <footer>
         <p>
-          Nhạc phát từ trình phát chính thức của YouTube · Thông tin và ảnh bìa: Apple Music · Ảnh nghệ sĩ: Spotify hoặc video
-          chính thức. Trang không đăng nhập, không lưu dữ liệu của bạn.
+          Nhạc phát từ trình phát chính thức của YouTube · Thông tin và ảnh bìa: Apple Music · Ảnh nghệ sĩ: Kênh YouTube
+          hoặc Spotify chính thức. Trang không đăng nhập, không lưu dữ liệu của bạn.
         </p>
         <p className="shortcuts-hint">
           Phím tắt: <kbd>Space</kbd> Phát/Dừng · <kbd>←</kbd> <kbd>→</kbd> Đổi bài · <kbd>M</kbd> Tắt tiếng · <kbd>S</kbd> Ngẫu nhiên · <kbd>R</kbd> Lặp lại · <kbd>F</kbd> Thu/Mở player
@@ -84,7 +85,7 @@ export default function App() {
   );
 }
 
-// Video nền chỉ chạy khi đang nằm trong màn hình, đỡ tốn pin và GPU lúc nghe nhạc
+// Video nền chỉ chạy khi đang nằm trong màn hình
 function playInView(video: HTMLVideoElement | null) {
   if (!video) return;
   const io = new IntersectionObserver(([e]) => (e.isIntersecting ? video.play().catch(() => {}) : video.pause()), {
@@ -134,14 +135,9 @@ function Hero() {
 }
 
 function Flow({ artists }: { artists: Artist[] }) {
-  const list = useRef<HTMLUListElement>(null);
   const [selectedGenre, setSelectedGenre] = useState<string>('all');
   const [query, setQuery] = useState('');
-
-  const nudge = (dir: number) => {
-    if (!list.current || !list.current.firstElementChild) return;
-    list.current.scrollBy({ left: dir * list.current.firstElementChild.clientWidth, behavior: 'smooth' });
-  };
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const normQuery = norm(query);
 
@@ -153,7 +149,12 @@ function Flow({ artists }: { artists: Artist[] }) {
     });
   }, [artists, selectedGenre, normQuery]);
 
-  // Tìm bài hát theo từ khóa nếu có nhập tìm kiếm
+  // Reset về vị trí đầu khi đổi bộ lọc
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [selectedGenre, normQuery]);
+
+  // Tìm bài hát tức thì theo từ khóa
   const matchedTracks = useMemo(() => {
     if (!normQuery) return [];
     const results: { artist: Artist; track: Track }[] = [];
@@ -171,7 +172,7 @@ function Flow({ artists }: { artists: Artist[] }) {
   return (
     <>
       <h2>Chọn một nghệ sĩ</h2>
-      <p className="hint">Vuốt ngang để lướt, chạm để mở danh sách bài.</p>
+      <p className="hint">Vuốt ngang để xoay đĩa, chạm để mở danh sách bài.</p>
 
       {/* Bộ lọc thể loại & tìm kiếm */}
       <div className="flow-filter">
@@ -191,6 +192,7 @@ function Flow({ artists }: { artists: Artist[] }) {
         </div>
 
         <div className="search-wrap">
+          <IconSearch className="search-icon" size={17} />
           <input
             type="search"
             value={query}
@@ -200,7 +202,7 @@ function Flow({ artists }: { artists: Artist[] }) {
           />
           {query && (
             <button className="clear-btn" aria-label="Xóa tìm kiếm" onClick={() => setQuery('')}>
-              ✕
+              <IconClose size={14} />
             </button>
           )}
         </div>
@@ -222,7 +224,9 @@ function Flow({ artists }: { artists: Artist[] }) {
                   <strong>{track.title}</strong>
                   <small>{artist.name}{track.feat && ` ft. ${track.feat}`}</small>
                 </div>
-                <span className="search-play">▶</span>
+                <span className="search-play">
+                  <IconPlay size={14} />
+                </span>
               </button>
             ))}
           </div>
@@ -232,29 +236,114 @@ function Flow({ artists }: { artists: Artist[] }) {
       {filteredArtists.length === 0 ? (
         <p className="notice">Không tìm thấy nghệ sĩ nào phù hợp.</p>
       ) : (
-        <>
-          <ul ref={list} tabIndex={0} aria-label="Nghệ sĩ, vuốt ngang để xem thêm">
-            {filteredArtists.map((a) => (
-              <li key={a.id}>
-                <button
-                  onClick={(e) => {
-                    e.currentTarget.parentElement!.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
-                    set({ sheet: a });
-                  }}
-                >
-                  <img src={a.image} alt="" loading="lazy" decoding="async" />
-                  <strong>{a.name}</strong>
-                  <small>{GENRE[a.genre] ?? a.genre} · {a.tracks.length} bài</small>
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div className="flow-nav">
-            <button aria-label="Nghệ sĩ trước" onClick={() => nudge(-1)}>←</button>
-            <button aria-label="Nghệ sĩ kế tiếp" onClick={() => nudge(1)}>→</button>
-          </div>
-        </>
+        <FramerRoll
+          artists={filteredArtists}
+          activeIndex={activeIndex}
+          onChangeIndex={setActiveIndex}
+        />
       )}
     </>
+  );
+}
+
+/** Framer Roll: Vòng cuộn đĩa 3D vô tận, vuốt mượt mà qua mép tự động quay lại đầu mà không ngắt quãng */
+function FramerRoll({
+  artists,
+  activeIndex,
+  onChangeIndex,
+}: {
+  artists: Artist[];
+  activeIndex: number;
+  onChangeIndex: React.Dispatch<React.SetStateAction<number>>;
+}) {
+  const count = artists.length;
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  const stepRoll = (dir: number) => {
+    if (count === 0) return;
+    onChangeIndex((i) => (i + dir + count) % count);
+  };
+
+  const onDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+    if (info.offset.x < -36 || info.velocity.x < -240) {
+      stepRoll(1);
+    } else if (info.offset.x > 36 || info.velocity.x > 240) {
+      stepRoll(-1);
+    }
+  };
+
+  return (
+    <div className="roll-container">
+      <motion.div
+        ref={stageRef}
+        className="roll-stage"
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.2}
+        onDragEnd={onDragEnd}
+        tabIndex={0}
+        aria-label="Dải cuộn nghệ sĩ vô tận, vuốt hoặc dùng phím mũi tên"
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowRight') stepRoll(1);
+          else if (e.key === 'ArrowLeft') stepRoll(-1);
+        }}
+      >
+        {artists.map((a, idx) => {
+          // Tính khoảng cách vòng tròn (circular wrapped diff) để lặp vô tận
+          let diff = idx - activeIndex;
+          while (diff > count / 2) diff -= count;
+          while (diff <= -count / 2) diff += count;
+
+          const isCenter = diff === 0;
+          const isFar = Math.abs(diff) > 3;
+
+          return (
+            <motion.div
+              key={a.id}
+              className="roll-card"
+              data-active={isCenter}
+              initial={false}
+              animate={{
+                x: diff * 216,
+                scale: Math.max(0.66, 1 - Math.abs(diff) * 0.13),
+                rotateY: diff * -16,
+                z: -Math.abs(diff) * 70,
+                opacity: isFar ? 0 : Math.max(0.18, 1 - Math.abs(diff) * 0.26),
+              }}
+              transition={{ type: 'spring', stiffness: 340, damping: 28 }}
+              style={{
+                zIndex: 30 - Math.abs(diff),
+                pointerEvents: Math.abs(diff) > 2 ? 'none' : 'auto',
+              }}
+              onClick={() => {
+                if (isCenter) {
+                  set({ sheet: a });
+                } else {
+                  onChangeIndex((i) => (i + diff + count) % count);
+                }
+              }}
+            >
+              <div className="card-thumb">
+                <img src={a.image} alt={a.name} draggable={false} loading="lazy" />
+                <div className="card-glass-glow" />
+              </div>
+              <div className="card-meta">
+                <strong>{a.name}</strong>
+                <small>{GENRE[a.genre] ?? a.genre} · {a.tracks.length} bài</small>
+              </div>
+            </motion.div>
+          );
+        })}
+      </motion.div>
+
+      <div className="flow-nav">
+        <button aria-label="Nghệ sĩ trước" onClick={() => stepRoll(-1)}>
+          <IconArrowLeft size={20} />
+        </button>
+        <button aria-label="Nghệ sĩ kế tiếp" onClick={() => stepRoll(1)}>
+          <IconArrowRight size={20} />
+        </button>
+      </div>
+    </div>
   );
 }

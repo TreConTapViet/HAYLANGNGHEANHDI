@@ -285,17 +285,36 @@ export function cycleRepeat() {
 export function toggleShuffle() {
   const next = !get().shuffle;
   set({ shuffle: next });
-  showToast(next ? 'Bật phát ngẫu nhiên' : 'Tắt phát ngẫu nhiên');
+  showToast(next ? 'Bật phát ngẫu nhiên (trộn toàn bộ nghệ sĩ)' : 'Tắt phát ngẫu nhiên');
 }
 
 export function step(dir: 1 | -1, autoEnd = false) {
-  const { now, repeat, shuffle } = get();
+  const { now, repeat, shuffle, artists } = get();
   if (!now) return;
   // Lùi khi đã nghe quá 3 giây = phát lại từ đầu
   if (!autoEnd && dir < 0 && getTime() > 3) {
     seek(0);
     return;
   }
+
+  // Chế độ trộn bài giữa các nghệ sĩ khác nhau, không bó buộc trong một nghệ sĩ
+  if (shuffle && artists && artists.length > 0) {
+    const allPool: { artist: Artist; track: Track }[] = [];
+    for (const a of artists) {
+      for (const t of a.tracks) {
+        allPool.push({ artist: a, track: t });
+      }
+    }
+    if (allPool.length > 1) {
+      let chosen = allPool[Math.floor(Math.random() * allPool.length)];
+      while (chosen.track.id === now.track.id && allPool.length > 1) {
+        chosen = allPool[Math.floor(Math.random() * allPool.length)];
+      }
+      play(chosen.artist, chosen.track);
+      return;
+    }
+  }
+
   const list = now.artist.tracks;
   const idx = list.indexOf(now.track);
 
@@ -304,16 +323,7 @@ export function step(dir: 1 | -1, autoEnd = false) {
     return;
   }
 
-  let nextTrack: Track;
-  if (shuffle && list.length > 1) {
-    let nextIdx = idx;
-    while (nextIdx === idx) {
-      nextIdx = Math.floor(Math.random() * list.length);
-    }
-    nextTrack = list[nextIdx];
-  } else {
-    nextTrack = list[(idx + dir + list.length) % list.length];
-  }
+  const nextTrack = list[(idx + dir + list.length) % list.length];
   play(now.artist, nextTrack);
 }
 
