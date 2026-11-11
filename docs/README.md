@@ -154,7 +154,7 @@ Theo yêu cầu: bỏ video/MV làm phần chính, thay bằng lời bài hát; 
 
 Kết quả: **103/103 bài** dùng video kênh chính thức hoặc kênh Topic của nghệ sĩ. Mỗi bài có thêm trường `seconds` (độ dài video) để script chọn đúng phiên bản lời. Bài nào video vẫn lệch bản lời hơn 3 giây thì trình phát báo một lần, và có thể chỉnh tay bằng `lyricsOffset` (xem [content/artists/README.md](../content/artists/README.md)).
 
-**Dải chọn nghệ sĩ (theo yêu cầu):** bỏ hai nút ← →; thay kiểu xoay 3D bằng **dải cuộn tự trôi vô tận** (Motion `useAnimationFrame` + `useMotionValue`). Rê chuột thì chậm lại; kéo thì cuộn theo tay, thả ra còn trôi theo quán tính; phím ← → đẩy trôi nhanh khoảng một thẻ; chạm để mở danh sách bài. Lọc còn ít nghệ sĩ, không đủ phủ bề ngang, thì đứng yên ở giữa. Dải tạm dừng khi nằm ngoài màn hình hoặc khi trình phát lớn đang mở. Ở chế độ "giảm chuyển động" thì không tự trôi.
+**Dải chọn nghệ sĩ (theo yêu cầu):** bỏ hai nút ← →; thay kiểu xoay 3D bằng **dải cuộn tự trôi vô tận** (Motion `useAnimationFrame` + `useMotionValue`). Rê chuột thì chậm lại; kéo thì cuộn theo tay, thả ra còn trôi theo quán tính; **lăn chuột trên dải** (hoặc vuốt ngang trên touchpad) thì dải trôi ngang, mỗi nấc lăn khoảng một thẻ, con trỏ ngoài dải thì trang cuộn như thường; phím ← → đẩy trôi nhanh khoảng một thẻ; chạm để mở danh sách bài. Lọc còn ít nghệ sĩ, không đủ phủ bề ngang, thì đứng yên ở giữa. Dải tạm dừng khi nằm ngoài màn hình hoặc khi trình phát lớn đang mở. Ở chế độ "giảm chuyển động" thì không tự trôi.
 
 **Kính lỏng (phong cách Liquid Glass của Apple), theo yêu cầu:** cột danh sách bên trái và thẻ thu gọn dùng chung một kiểu kính:
 - Làm mờ và tăng bão hòa nền phía sau.

@@ -146,7 +146,7 @@ Theo phong cách Liquid Glass của Apple, viết bằng CSS thuần trong `src/
 
 ## Dải chọn nghệ sĩ (cập nhật 12/11/2026)
 
-Dải cuộn tự trôi, 36px/giây (rê chuột: 6px/giây; giảm chuyển động: đứng yên). Thẻ rộng `clamp(150px, 40vw, 210px)`, cách nhau 20px; hai mép mờ dần bằng `mask-image`. Rê chuột hoặc dùng phím Tab tới thẻ thì thẻ nhấc lên 6px và phóng 1,04 lần, có viền sáng. Không còn nút ← →.
+Dải cuộn tự trôi, 36px/giây (rê chuột: 6px/giây; giảm chuyển động: đứng yên). Thẻ rộng `clamp(150px, 40vw, 210px)`, cách nhau 20px; hai mép mờ dần bằng `mask-image`. Rê chuột hoặc dùng phím Tab tới thẻ thì thẻ nhấc lên 6px và phóng 1,04 lần, có viền sáng. Không còn nút ← →. Lăn chuột trên dải: mỗi nấc (~100px) cộng quán tính để trôi mượt khoảng một thẻ; dải đứng yên thì lăn chuột cuộn trang như thường.
 
 ## Biểu tượng (cập nhật 12/11/2026)
 

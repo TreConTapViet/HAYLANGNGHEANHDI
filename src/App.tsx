@@ -166,7 +166,7 @@ function Flow({ artists }: { artists: Artist[] }) {
   return (
     <>
       <h2>Chọn một nghệ sĩ</h2>
-      <p className="hint">Kéo ngang để lướt, chạm vào nghệ sĩ để mở danh sách bài.</p>
+      <p className="hint">Kéo ngang hoặc lăn chuột để lướt, chạm vào nghệ sĩ để mở danh sách bài.</p>
 
       {/* Bộ lọc thể loại & tìm kiếm */}
       <div className="flow-filter">
@@ -278,6 +278,23 @@ function ArtistRoll({ artists }: { artists: Artist[] }) {
     };
   }, [artists, x]);
 
+  // Lăn chuột (hoặc vuốt ngang trên touchpad) khi con trỏ nằm trên dải: dải trôi ngang thay vì cuộn trang.
+  // Gắn trực tiếp với passive: false vì onWheel của React không cho chặn cuộn trang.
+  useEffect(() => {
+    const el = box.current!;
+    const onWheel = (e: WheelEvent) => {
+      if (!loop) return; // dải đứng yên thì để trang cuộn bình thường
+      const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (!d) return;
+      e.preventDefault();
+      const px = e.deltaMode === 1 ? d * 40 : d; // deltaMode 1: tính theo dòng (chuột trên Firefox)
+      // đẩy thêm quán tính thay vì nhảy cóc: một nấc lăn (~100px) trôi mượt khoảng một thẻ
+      st.current.fling = Math.max(-4000, Math.min(4000, st.current.fling - px * 7));
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, [loop]);
+
   useAnimationFrame((_, dt) => {
     const s = st.current;
     const { now, mini } = useStore.getState();
@@ -315,7 +332,7 @@ function ArtistRoll({ artists }: { artists: Artist[] }) {
       ref={box}
       className="roll"
       data-static={!loop}
-      aria-label="Nghệ sĩ: kéo ngang để lướt, phím mũi tên để trôi nhanh"
+      aria-label="Nghệ sĩ: kéo ngang hoặc lăn chuột để lướt, phím mũi tên để trôi nhanh"
       onPointerDown={(e) => {
         if (!loop) return;
         st.current.moved = false;
